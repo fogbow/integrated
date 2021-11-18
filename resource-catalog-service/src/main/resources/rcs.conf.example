@@ -1,0 +1,45 @@
+# ----- Fill the required information and move it to ./private/rcs.conf -----
+
+# Catalog Service configuration
+# Required
+provider_id=local-provider-member-id
+
+# Membership Service configuration
+# Required
+ms_url=http://localhost
+# Required
+ms_port=8083
+
+# Cache Validity in minutes
+# Not required
+cache_expiration=
+
+# XMPP configurations
+# Required
+xmpp_password=pass
+# Required
+xmpp_server_ip=127.0.0.1
+# Not required
+xmpp_c2c_port=
+# Not required
+xmpp_timeout=
+
+# ----- Other Fogbow Services -----
+
+# Resource Allocation Service configuration
+# Required
+ras_url=http://127.0.0.1
+# Required
+ras_port=8080
+
+# Authentication Service configuration
+# Required
+as_url=http://127.0.0.1
+# Required
+as_port=8081
+
+# Federated Network Service configuration
+# Required
+fns_url=http://127.0.0.1
+# Required
+fns_port=8082

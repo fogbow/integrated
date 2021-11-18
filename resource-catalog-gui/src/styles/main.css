@@ -1,0 +1,36 @@
+html {
+  font-size: 100%;
+}
+
+.main-view {
+  margin-left: 11em;
+  margin-right: 11em;
+  margin-top: 3.2em;
+  color: #333333;
+  font-family: "Lato", sans-serif;
+}
+
+.main-view h1 {
+  margin-top: 0.2em;
+  font-weight: bolder;
+}
+
+.main-nav {
+  background-color: #8ab92d;
+  height: 3.3em;
+}
+
+.members-list {
+  margin-bottom: 1.1em;
+  font-weight: bold;
+}
+
+.config-menu {
+  margin-bottom: 1.2em;
+  font-size: 1.2em;
+}
+
+#membersDropdown {
+  font-weight: bold;
+  font-size: 1.3em;
+}

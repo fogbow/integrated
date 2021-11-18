@@ -1,0 +1,43 @@
+- hosts: service_host
+  vars:
+    source_conf: ../scripts/tmp/conf-files
+    target_conf: ./
+  tasks:
+    - name: Removing files from earlier installation in service_host
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "./conf-files"
+        - "./deploy-and-start-services.sh"
+    - name: Copying conf-files to service_host
+      copy:
+        src: "{{ source_conf }}"
+        dest: "{{ target_conf }}"
+        mode: 0600
+    - name: Copying service.conf to service_host
+      copy:
+        src: "{{ source_conf }}/service.conf"
+        dest: "{{ target_conf }}/conf-files/service.conf"
+        mode: 0644
+    - name: Copying deploy-and-start-services.sh to service_host
+      copy:
+        src: "../scripts/tmp/deploy-and-start-services.sh"
+        dest: "./deploy-and-start-services.sh"
+        mode: 0700
+    - name: Creating data directory
+      file:
+        path: ./data
+        state: directory
+        mode: 0700
+    - name: Adding read permissions to required files
+      file:
+        path: ./conf-files/apache/index.html
+        mode: 0644
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Removing conf-files from installation host
+      file:
+        path: ../scripts/tmp
+        state: absent

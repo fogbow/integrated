@@ -1,0 +1,115 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This API introduces readers to Fogbow MS REST API, provides guidelines on how to use it, and describes the available features accessible from it.",
+    "version": "2.0.0",
+    "title": "Fogbow Membership Service API",
+    "contact": {
+      "name": "Fogbow team",
+      "url": "https://www.fogbow.cloud",
+      "email": "contact@fogbow.cloud"
+    }
+  },
+  "host": "10.11.16.23:8083",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "membership",
+      "description": "Queries the members currently belonging to the federation"
+    },
+    {
+      "name": "version",
+      "description": "Queries the version of the service's API."
+    }
+  ],
+  "paths": {
+    "/ms/members": {
+      "get": {
+        "tags": [
+          "membership"
+        ],
+        "summary": "Lists the member ids in the federation.",
+        "operationId": "listMembersUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MembersList"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/ms/version": {
+      "get": {
+        "tags": [
+          "version"
+        ],
+        "summary": "Returns the version of the service's API, and the build number.",
+        "operationId": "getVersionUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/VersionNumber"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "MembersList": {
+      "type": "object",
+      "properties": {
+        "members": {
+          "type": "array",
+          "example": [
+            "provider1.domain1",
+            "provider2.domain2"
+          ],
+          "allowEmptyValue": false,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "MembersList"
+    },
+    "VersionNumber": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "example": "v.2.0.0-ms-cd46c62-common-4e0d74e",
+          "allowEmptyValue": false
+        }
+      },
+      "title": "VersionNumber"
+    }
+  }
+}

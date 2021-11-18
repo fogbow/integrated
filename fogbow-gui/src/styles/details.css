@@ -1,0 +1,37 @@
+.details {
+  padding: 15px;
+  margin-left: 15px;
+  margin-top: 20px;
+  border: 1px #dddddd solid;
+}
+
+.bolder {
+  font-weight: bold;
+}
+
+.public-key {
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+h2 {
+  line-height: 27px;
+  font-size: 1.2rem;
+}
+
+h3 {
+  font-size: 1.1rem
+}
+
+p {
+  font-size: 0.8rem;
+}
+
+.about {
+  margin-top: 1rem;
+  margin-left: 1.5rem;
+}
+
+.security-rules {
+  font-size: 0.8rem
+}

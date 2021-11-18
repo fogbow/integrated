@@ -1,0 +1,28 @@
+.modal {
+  font-size: 14px;
+}
+
+.form-inline label {
+  justify-content: left;
+}
+
+.form-control {
+  margin-bottom: 15px;
+}
+
+.requirements {
+  padding-left: 2rem;
+  font-size: 0.9rem;
+}
+
+.name-id-pair {
+  max-width: 20rem;
+  text-overflow: ellipsis;
+}
+
+.checkbox-list { margin-bottom: 15px; }
+.checkbox-field { display: flex; } 
+.checkbox-field label { 
+  margin-left: 10px;
+  display: inline; 
+}
