@@ -21,8 +21,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import cloud.fogbow.common.constants.HttpMethod;
 import cloud.fogbow.common.exceptions.FogbowException;
+import cloud.fogbow.common.exceptions.InternalServerErrorException;
 import cloud.fogbow.common.exceptions.InvalidParameterException;
-import cloud.fogbow.common.exceptions.UnexpectedException;
 import cloud.fogbow.common.util.connectivity.HttpRequestClient;
 import cloud.fogbow.common.util.connectivity.HttpResponse;
 import cloud.fogbow.rcs.constants.Messages;
@@ -322,7 +322,7 @@ public class CatalogServiceTest extends BaseUnitTests {
             // exercise
             this.service.requestMembers();
             Assert.fail();
-        } catch (UnexpectedException e) {
+        } catch (InternalServerErrorException e) {
             // verify
             Assert.assertEquals(expected, e.getMessage());
         }

@@ -5,15 +5,15 @@ import org.junit.Test;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.PacketError;
 
+import cloud.fogbow.common.exceptions.ConfigurationErrorException;
 import cloud.fogbow.common.exceptions.FogbowException;
 import cloud.fogbow.common.exceptions.InstanceNotFoundException;
+import cloud.fogbow.common.exceptions.InternalServerErrorException;
 import cloud.fogbow.common.exceptions.InvalidParameterException;
-import cloud.fogbow.common.exceptions.NoAvailableResourcesException;
-import cloud.fogbow.common.exceptions.QuotaExceededException;
+import cloud.fogbow.common.exceptions.UnacceptableOperationException;
 import cloud.fogbow.common.exceptions.UnauthenticatedUserException;
 import cloud.fogbow.common.exceptions.UnauthorizedRequestException;
 import cloud.fogbow.common.exceptions.UnavailableProviderException;
-import cloud.fogbow.common.exceptions.UnexpectedException;
 import cloud.fogbow.rcs.constants.Messages;
 
 public class XmppErrorConditionToExceptionTranslatorTest {
@@ -130,7 +130,7 @@ public class XmppErrorConditionToExceptionTranslatorTest {
             XmppErrorConditionToExceptionTranslator.handleError(iq, this.providerId);
             // verify: if some exception occurred
             Assert.fail();
-        } catch (QuotaExceededException e) {
+        } catch (ConfigurationErrorException e) {
             // verify: if the message is correct
             Assert.assertEquals(this.messageError, e.getMessage());
         }
@@ -153,7 +153,7 @@ public class XmppErrorConditionToExceptionTranslatorTest {
             XmppErrorConditionToExceptionTranslator.handleError(iq, providerId);
             // verify: if some exception occurred
             Assert.fail();
-        } catch (NoAvailableResourcesException e) {
+        } catch (UnacceptableOperationException e) {
             // verify: if the message is correct
             Assert.assertEquals(this.messageError, e.getMessage());
         }
@@ -199,7 +199,7 @@ public class XmppErrorConditionToExceptionTranslatorTest {
             XmppErrorConditionToExceptionTranslator.handleError(iq, this.providerId);
             // verify: if some exception occurred
             Assert.fail();
-        } catch (UnexpectedException e) {
+        } catch (InternalServerErrorException e) {
             // verify: if the message is correct
             Assert.assertEquals(this.messageError, e.getMessage());
         }

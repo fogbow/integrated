@@ -5,15 +5,17 @@ import org.xmpp.packet.PacketError;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import cloud.fogbow.common.exceptions.CommunicationErrorException;
+import cloud.fogbow.common.exceptions.ConfigurationErrorException;
 import cloud.fogbow.common.exceptions.FogbowException;
 import cloud.fogbow.common.exceptions.InstanceNotFoundException;
+import cloud.fogbow.common.exceptions.InternalServerErrorException;
 import cloud.fogbow.common.exceptions.InvalidParameterException;
-import cloud.fogbow.common.exceptions.NoAvailableResourcesException;
-import cloud.fogbow.common.exceptions.QuotaExceededException;
+import cloud.fogbow.common.exceptions.NotImplementedOperationException;
+import cloud.fogbow.common.exceptions.UnacceptableOperationException;
 import cloud.fogbow.common.exceptions.UnauthenticatedUserException;
 import cloud.fogbow.common.exceptions.UnauthorizedRequestException;
 import cloud.fogbow.common.exceptions.UnavailableProviderException;
-import cloud.fogbow.common.exceptions.UnexpectedException;
 import cloud.fogbow.rcs.constants.Messages;
 
 public class XmppErrorConditionToExceptionTranslator {
@@ -41,15 +43,19 @@ public class XmppErrorConditionToExceptionTranslator {
         case item_not_found:
             throw new InstanceNotFoundException(message);
         case conflict:
-            throw new QuotaExceededException(message);
+            throw new ConfigurationErrorException(message);
         case not_acceptable:
-            throw new NoAvailableResourcesException(message);
+            throw new UnacceptableOperationException(message);
         case remote_server_not_found:
             throw new UnavailableProviderException(message);
         case internal_server_error:
-            throw new UnexpectedException(message);
-        default:
+            throw new InternalServerErrorException(message);
+        case feature_not_implemented:
+            throw new NotImplementedOperationException(message);
+        case undefined_condition:
             throw new FogbowException(message);
+        default:
+            throw new CommunicationErrorException(message);
         }
     }
 }

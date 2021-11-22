@@ -1,7 +1,7 @@
 package cloud.fogbow.rcs.core.intercomponent.xmpp.requesters;
 
 import cloud.fogbow.common.exceptions.FogbowException;
-import cloud.fogbow.common.exceptions.UnexpectedException;
+import cloud.fogbow.common.exceptions.InternalServerErrorException;
 import cloud.fogbow.common.util.GsonHolder;
 import cloud.fogbow.rcs.constants.Messages;
 import cloud.fogbow.rcs.constants.SystemConstants;
@@ -74,7 +74,7 @@ public class RemoteGetAllServicesRequest {
     }
 
     @VisibleForTesting
-    List<ServiceType> unmarshal(IQ response) throws UnexpectedException{
+    List<ServiceType> unmarshal(IQ response) throws InternalServerErrorException{
         Element queryElement = response.getElement().element(IqElement.QUERY.toString());
         Element contentElement = queryElement.element(IqElement.CONTENT.toString());
 
@@ -83,7 +83,7 @@ public class RemoteGetAllServicesRequest {
             return (List<ServiceType>) GsonHolder.getInstance().
                     fromJson(contentElement.getText(), type);
         } catch (Exception e) {
-            throw new UnexpectedException(e.getMessage());
+            throw new InternalServerErrorException(e.getMessage());
         }
     }
 }

@@ -4,7 +4,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import cloud.fogbow.common.exceptions.FogbowException;
-import cloud.fogbow.common.exceptions.UnexpectedException;
+import cloud.fogbow.common.exceptions.InternalServerErrorException;
 import cloud.fogbow.common.util.BashScriptRunner;
 import cloud.fogbow.rcs.constants.ConfigurationPropertyDefaults;
 import cloud.fogbow.rcs.constants.ConfigurationPropertyKeys;
@@ -71,7 +71,7 @@ public class ApplicationFacade {
         BashScriptRunner.Output result = runner.runtimeRun(command);
 
         if(result.getExitCode() != 0) {
-            throw new UnexpectedException(UNABLE_TO_UPDATE_PROPERTY);
+            throw new InternalServerErrorException(UNABLE_TO_UPDATE_PROPERTY);
         }
 
         PropertiesHolder.getInstance().refreshProperties();

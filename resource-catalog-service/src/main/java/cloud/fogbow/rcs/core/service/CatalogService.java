@@ -12,7 +12,7 @@ import com.google.common.annotations.VisibleForTesting;
 
 import cloud.fogbow.common.constants.HttpMethod;
 import cloud.fogbow.common.exceptions.FogbowException;
-import cloud.fogbow.common.exceptions.UnexpectedException;
+import cloud.fogbow.common.exceptions.InternalServerErrorException;
 import cloud.fogbow.common.util.connectivity.HttpRequestClient;
 import cloud.fogbow.common.util.connectivity.HttpResponse;
 import cloud.fogbow.rcs.constants.ConfigurationPropertyKeys;
@@ -155,14 +155,14 @@ public class CatalogService {
     }
     
     @VisibleForTesting
-    HttpResponse doGetRequest(String endpoint) throws UnexpectedException {
+    HttpResponse doGetRequest(String endpoint) throws InternalServerErrorException {
         Map<String, String> headers = new HashMap<>();
         Map<String, String> body = new HashMap<>();
         try {
             return HttpRequestClient.doGenericRequest(HttpMethod.GET, endpoint, headers, body);
         } catch (Exception e) {
             String message = String.format(Messages.Exception.GENERIC_EXCEPTION, e.getMessage());
-            throw new UnexpectedException(message, e);
+            throw new InternalServerErrorException(message);
         }
     }
     
