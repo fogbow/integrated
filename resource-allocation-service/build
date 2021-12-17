@@ -1,0 +1,9 @@
+#!/bin/bash
+
+mkdir dependencies
+
+cp -r ../common/ dependencies
+cp -r ../authentication-service/ dependencies
+cp -r ../membership-service/ dependencies
+
+sudo docker build --no-cache -t fogbow/resource-allocation-service:latest .

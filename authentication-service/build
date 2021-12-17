@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mkdir dependencies
+
+cp -r ../common/ dependencies
+
+sudo docker build --no-cache -t fogbow/authentication-service:latest .
