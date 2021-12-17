@@ -49,6 +49,30 @@ fi
 sudo docker stop fogbow-apache fogbow-database fogbow-as fogbow-ras fogbow-gui
 sudo docker rm fogbow-apache fogbow-database fogbow-as fogbow-ras fogbow-gui
 
+function extract_component {
+        tar -xzf "components_archives/$1.tar.gz" -C "components_archives" >> log_extract
+}
+
+function build_component_image {
+       cd "components_archives/$1" && ./build >> log_build && cd ../..
+}
+
+extract_component accounting-service
+extract_component authentication-service
+extract_component common
+extract_component finance-service
+extract_component membership-service
+extract_component resource-catalog-gui
+extract_component authentication-service
+extract_component federated-network-service
+extract_component fogbow-cli
+extract_component fogbow-gui
+extract_component resource-allocation-service
+extract_component resource-catalog-service
+
+build_component_image authentication-service
+build_component_image resource-allocation-service
+
 # Create containers
 
 sudo docker pull fogbow/apache-shibboleth-server:$APACHE_TAG
@@ -72,19 +96,17 @@ sudo docker run -tdi --name fogbow-database \
       -v $WORK_DIR/data:/var/lib/postgresql/data \
       fogbow/database:$DB_TAG
 
-sudo docker pull fogbow/authentication-service:$AS_TAG
 sudo docker run -tdi --name fogbow-as \
       -p $AS_PORT:8080 \
       -v $WORK_DIR/conf-files/as:/root/authentication-service/src/main/resources/private \
-      fogbow/authentication-service:$AS_TAG
+      fogbow/authentication-service:latest
 
-sudo docker pull fogbow/resource-allocation-service:$RAS_TAG
 sudo docker run -tdi --name fogbow-ras \
       -p $RAS_PORT:8080 \
       -v $WORK_DIR/conf-files/ras:/root/resource-allocation-service/src/main/resources/private \
       -v $WORK_DIR/conf-files/ras/application.properties:/root/resource-allocation-service/application.properties \
       -v $WORK_DIR/timestamp-storage/ras.db:/root/resource-allocation-service/ras.db \
-      fogbow/resource-allocation-service:$RAS_TAG
+      fogbow/resource-allocation-service:latest
 
 sudo docker pull fogbow/fogbow-gui:$GUI_TAG
 sudo docker run -tdi --name fogbow-gui \
