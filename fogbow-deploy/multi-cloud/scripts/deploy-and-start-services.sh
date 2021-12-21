@@ -54,7 +54,11 @@ function extract_component {
 }
 
 function build_component_image {
-       cd "components_archives/$1" && ./build >> log_build && cd ../..
+	cd "components_archives/$1" && ./build >> log_build && cd ../..
+}
+
+function build_component_jar {
+	cd "components_archives/$1" && mvn install -Dmaven.test.skip=true >> log_jar && cd ../.. 
 }
 
 extract_component accounting-service
@@ -70,6 +74,12 @@ extract_component fogbow-gui
 extract_component resource-allocation-service
 extract_component resource-catalog-service
 
+build_component_jar common
+build_component_jar authentication-service
+build_component_jar membership-service
+#build_component_jar resource-allocation-service
+
+build_component_image common
 build_component_image authentication-service
 build_component_image resource-allocation-service
 
@@ -99,14 +109,14 @@ sudo docker run -tdi --name fogbow-database \
 sudo docker run -tdi --name fogbow-as \
       -p $AS_PORT:8080 \
       -v $WORK_DIR/conf-files/as:/root/authentication-service/src/main/resources/private \
-      fogbow/authentication-service:latest
+      fogbow/authentication-service:latest &>> log_as
 
 sudo docker run -tdi --name fogbow-ras \
       -p $RAS_PORT:8080 \
       -v $WORK_DIR/conf-files/ras:/root/resource-allocation-service/src/main/resources/private \
       -v $WORK_DIR/conf-files/ras/application.properties:/root/resource-allocation-service/application.properties \
       -v $WORK_DIR/timestamp-storage/ras.db:/root/resource-allocation-service/ras.db \
-      fogbow/resource-allocation-service:latest
+      fogbow/resource-allocation-service:latest &>> log_ras
 
 sudo docker pull fogbow/fogbow-gui:$GUI_TAG
 sudo docker run -tdi --name fogbow-gui \

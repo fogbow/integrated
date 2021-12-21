@@ -5,4 +5,4 @@
 #cp -r ../common/ dependencies
 #cp -r ~/.m2/repository/fogbow/common dependencies
 
-sudo docker build --no-cache -t fogbow/authentication-service:latest .
+sudo docker build --no-cache -t fogbow/common:latest .

@@ -10,7 +10,7 @@
         update_cache: yes
     - name: "Installing misc packages"
       apt:
-        name: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common']
+        name: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'maven']
         update_cache: yes
     - name: "Adding Docker GPG key"
       apt_key:
