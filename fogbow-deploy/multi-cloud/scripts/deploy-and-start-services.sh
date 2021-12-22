@@ -64,24 +64,26 @@ function build_component_jar {
 extract_component accounting-service
 extract_component authentication-service
 extract_component common
-extract_component finance-service
-extract_component membership-service
-extract_component resource-catalog-gui
-extract_component authentication-service
 extract_component federated-network-service
-extract_component fogbow-cli
+extract_component finance-service
 extract_component fogbow-gui
+extract_component membership-service
 extract_component resource-allocation-service
+extract_component resource-catalog-gui
 extract_component resource-catalog-service
 
 build_component_jar common
 build_component_jar authentication-service
 build_component_jar membership-service
+build_component_jar resource-allocation-service
+build_component_jar accounting-service
 #build_component_jar resource-allocation-service
 
 build_component_image common
 build_component_image authentication-service
 build_component_image resource-allocation-service
+build_component_image membership-service
+build_component_image accounting-service
 
 # Create containers
 
@@ -111,12 +113,22 @@ sudo docker run -tdi --name fogbow-as \
       -v $WORK_DIR/conf-files/as:/root/authentication-service/src/main/resources/private \
       fogbow/authentication-service:latest &>> log_as
 
+sudo docker run -tdi --name fogbow-ms \
+      -p 8081 \
+      -v $WORK_DIR/conf-files/ms:/root/membership-service/src/main/resources/private \
+      fogbow/membership-service:latest &>> log_ms
+
 sudo docker run -tdi --name fogbow-ras \
       -p $RAS_PORT:8080 \
       -v $WORK_DIR/conf-files/ras:/root/resource-allocation-service/src/main/resources/private \
       -v $WORK_DIR/conf-files/ras/application.properties:/root/resource-allocation-service/application.properties \
       -v $WORK_DIR/timestamp-storage/ras.db:/root/resource-allocation-service/ras.db \
       fogbow/resource-allocation-service:latest &>> log_ras
+
+sudo docker run -tdi --name fogbow-accounting-service \
+      -p 8083 \
+      -v $WORK_DIR/conf-files/accs:/root/accounting-service/src/main/resources/private \
+      fogbow/accounting-service:latest &>> log_ms
 
 sudo docker pull fogbow/fogbow-gui:$GUI_TAG
 sudo docker run -tdi --name fogbow-gui \

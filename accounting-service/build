@@ -1,0 +1,8 @@
+#!/bin/bash
+
+mkdir dependencies
+
+cp -r /root/.m2/repository/fogbow/fogbow-as dependencies
+cp -r /root/.m2/repository/fogbow/fogbow-ras dependencies
+
+sudo docker build --no-cache -t fogbow/accounting-service:latest .

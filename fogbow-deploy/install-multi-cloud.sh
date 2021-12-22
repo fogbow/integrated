@@ -7,7 +7,6 @@ SITE_CONF_FILE_NAME="./multi-cloud/conf-files/host.conf"
 ANSIBLE_FILES_DIR_PATH="./multi-cloud/ansible-playbook"
 ANSIBLE_HOSTS_FILE_PATH=$ANSIBLE_FILES_DIR_PATH/"hosts"
 ANSIBLE_CFG_FILE_PATH=$ANSIBLE_FILES_DIR_PATH/"ansible.cfg"
-export DEPLOY_HOME="`cd .. && pwd`"
 
 function compress_component {
 	tar -czf ../components_archives/$1.tar.gz ../$1
@@ -18,35 +17,12 @@ mkdir ../components_archives
 compress_component accounting-service
 compress_component authentication-service 
 compress_component common
-compress_component finance-service
-compress_component membership-service
-compress_component resource-catalog-gui
-compress_component authentication-service
 compress_component federated-network-service
-compress_component fogbow-cli
-compress_component fogbow-gui
-compress_component resource-allocation-service
-compress_component resource-catalog-service
-
-export DEPLOY_HOME="`cd .. && pwd`"
-
-function compress_component {
-       tar -czf ../components_archives/$1.tar.gz ../$1
-}
-
-mkdir ../components_archives
-
-compress_component accounting-service
-compress_component authentication-service 
-compress_component common
 compress_component finance-service
-compress_component membership-service
-compress_component resource-catalog-gui
-compress_component authentication-service
-compress_component federated-network-service
-compress_component fogbow-cli
 compress_component fogbow-gui
+compress_component membership-service
 compress_component resource-allocation-service
+compress_component resource-catalog-gui
 compress_component resource-catalog-service
 
 # Generate content of Ansible hosts file

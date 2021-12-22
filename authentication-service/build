@@ -1,8 +1,3 @@
 #!/bin/bash
 
-#mkdir dependencies
-
-#cp -r ../common/ dependencies
-#cp -r ~/.m2/repository/fogbow/common dependencies
-
 sudo docker build --no-cache -t fogbow/authentication-service:latest .

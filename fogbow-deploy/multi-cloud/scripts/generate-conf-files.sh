@@ -238,6 +238,29 @@ echo "$DB_USERNAME_PATTERN=$DB_USERNAME" >> $RAS_DIR_PATH/$APPLICATION_PROPERTIE
 DB_PASSWORD_PATTERN="spring.datasource.password"
 echo "$DB_PASSWORD_PATTERN=$DB_PASSWORD" >> $RAS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
 
+# MS conf-file generation
+MS_DIR_PATH="./tmp/conf-files/ms"
+MS_CONF_FILE_NAME="ms.conf"
+MS_CONTAINER_CONF_FILE_DIR_PATH="/root/membership-service/src/main/resources/private"
+MS_PRIVATE_KEY_PATH=$MS_DIR_PATH/"id_rsa"
+MS_PUBLIC_KEY_PATH=$MS_DIR_PATH/"id_rsa.pub"
+MS_RSA_KEY_PATH=$MS_DIR_PATH/"rsa_key.pem"
+
+## Creating directory
+mkdir -p $MS_DIR_PATH
+
+
+# ACCS conf-file generation
+ACCS_DIR_PATH="./tmp/conf-files/accs"
+ACCS_CONF_FILE_NAME="accs.conf"
+ACCS_CONTAINER_CONF_FILE_DIR_PATH="/root/accounting-service/src/main/resources/private"
+ACCS_PRIVATE_KEY_PATH=$ACCS_DIR_PATH/"id_rsa"
+ACCS_PUBLIC_KEY_PATH=$ACCS_DIR_PATH/"id_rsa.pub"
+ACCS_RSA_KEY_PATH=$ACCS_DIR_PATH/"rsa_key.pem"
+
+## Creating directory
+mkdir -p $ACCS_DIR_PATH
+
 # GUI conf-file generation
 ## Setting AS variables
 GUI_DIR_PATH="./tmp/conf-files/gui"

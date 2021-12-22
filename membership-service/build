@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mkdir dependencies
+
+cp -r /root/.m2/repository/fogbow/fogbow-as dependencies
+
+sudo docker build --no-cache -t fogbow/membership-service:latest .

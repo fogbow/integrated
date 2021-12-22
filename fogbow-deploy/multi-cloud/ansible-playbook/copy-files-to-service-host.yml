@@ -2,7 +2,6 @@
   vars:
     source_conf: ../scripts/tmp/conf-files
     target_conf: ./
-    base_dir: "{{ lookup('env','DEPLOY_HOME') }}"
   tasks:
     - name: Removing files from earlier installation in service_host
       file:
