@@ -30,6 +30,11 @@
         src: "../scripts/tmp/deploy-and-start-services.sh"
         dest: "./deploy-and-start-services.sh"
         mode: 0700
+    - name: Copying extract-and-build.sh to service_host
+      copy:
+        src: "../scripts/tmp/extract-and-build.sh"
+        dest: "./extract-and-build.sh"
+        mode: 0700
     - name: Creating data directory
       file:
         path: ./data

@@ -49,42 +49,6 @@ fi
 sudo docker stop fogbow-apache fogbow-database fogbow-as fogbow-ras fogbow-gui
 sudo docker rm fogbow-apache fogbow-database fogbow-as fogbow-ras fogbow-gui
 
-function extract_component {
-        tar -xzf "components_archives/$1.tar.gz" -C "components_archives" >> log_extract
-}
-
-function build_component_image {
-	cd "components_archives/$1" && ./build >> log_build && cd ../..
-}
-
-function build_component_jar {
-	cd "components_archives/$1" && mvn install -Dmaven.test.skip=true >> log_jar && cd ../.. 
-}
-
-extract_component accounting-service
-extract_component authentication-service
-extract_component common
-extract_component federated-network-service
-extract_component finance-service
-extract_component fogbow-gui
-extract_component membership-service
-extract_component resource-allocation-service
-extract_component resource-catalog-gui
-extract_component resource-catalog-service
-
-build_component_jar common
-build_component_jar authentication-service
-build_component_jar membership-service
-build_component_jar resource-allocation-service
-build_component_jar accounting-service
-#build_component_jar resource-allocation-service
-
-build_component_image common
-build_component_image authentication-service
-build_component_image resource-allocation-service
-build_component_image membership-service
-build_component_image accounting-service
-
 # Create containers
 
 sudo docker pull fogbow/apache-shibboleth-server:$APACHE_TAG
@@ -113,10 +77,10 @@ sudo docker run -tdi --name fogbow-as \
       -v $WORK_DIR/conf-files/as:/root/authentication-service/src/main/resources/private \
       fogbow/authentication-service:latest &>> log_as
 
-sudo docker run -tdi --name fogbow-ms \
-      -p 8081 \
-      -v $WORK_DIR/conf-files/ms:/root/membership-service/src/main/resources/private \
-      fogbow/membership-service:latest &>> log_ms
+#sudo docker run -tdi --name fogbow-ms \
+#      -p 8081 \
+#      -v $WORK_DIR/conf-files/ms:/root/membership-service/src/main/resources/private \
+#      fogbow/membership-service:latest &>> log_ms
 
 sudo docker run -tdi --name fogbow-ras \
       -p $RAS_PORT:8080 \
@@ -126,15 +90,15 @@ sudo docker run -tdi --name fogbow-ras \
       fogbow/resource-allocation-service:latest &>> log_ras
 
 sudo docker run -tdi --name fogbow-accounting-service \
-      -p 8083 \
+      -p 8083:8080 \
       -v $WORK_DIR/conf-files/accs:/root/accounting-service/src/main/resources/private \
       fogbow/accounting-service:latest &>> log_ms
 
-sudo docker pull fogbow/fogbow-gui:$GUI_TAG
+#sudo docker pull fogbow/fogbow-gui:$GUI_TAG
 sudo docker run -tdi --name fogbow-gui \
       -p $GUI_PORT:3000 \
       -v $WORK_DIR/conf-files/gui/api.config.js:/root/fogbow-gui/src/defaults/api.config.js \
-      fogbow/fogbow-gui:$GUI_TAG
+      fogbow/fogbow-gui:latest &>> log_gui
 
 # Start AS
 AS_CONF_FILE_PATH="src/main/resources/private/as.conf"

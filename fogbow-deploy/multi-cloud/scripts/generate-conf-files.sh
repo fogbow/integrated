@@ -94,6 +94,11 @@ cp $DEPLOY_START_SERVICES_FILE_NAME ./tmp/$DEPLOY_START_SERVICES_FILE_NAME
 chmod 600 ./tmp/$DEPLOY_START_SERVICES_FILE_NAME
 sed -i "s|$DB_PASSWORD_PROPERTY|$DB_PASSWORD|g" ./tmp/$DEPLOY_START_SERVICES_FILE_NAME
 
+# Generating extract-and-build.sh
+EXTRACT_BUILD_FILE_NAME="extract-and-build.sh"
+cp $EXTRACT_BUILD_FILE_NAME ./tmp/$EXTRACT_BUILD_FILE_NAME
+chmod 600 ./tmp/$EXTRACT_BUILD_FILE_NAME
+
 # Ports and tags conf-file generation
 PORTS_TAGS_CONF_FILE_PATH="./tmp/conf-files/service.conf"
 touch $PORTS_TAGS_CONF_FILE_PATH
