@@ -10,6 +10,8 @@ AS_PORT_PATTERN="As_port"
 AS_PORT=$(grep $AS_PORT_PATTERN $SERVICE_CONF_FILE_PATH | cut -d"=" -f2-)
 RAS_PORT_PATTERN="Ras_port"
 RAS_PORT=$(grep $RAS_PORT_PATTERN $SERVICE_CONF_FILE_PATH | cut -d"=" -f2-)
+ACCS_PORT_PATTERN="Accs_port"
+ACCS_PORT=$(grep $ACCS_PORT_PATTERN $SERVICE_CONF_FILE_PATH | cut -d"=" -f2-)
 GUI_PORT_PATTERN="Gui_port"
 GUI_PORT=$(grep $GUI_PORT_PATTERN $SERVICE_CONF_FILE_PATH | cut -d"=" -f2-)
 DB_PORT_PATTERN="Db_port"
@@ -28,6 +30,11 @@ RAS_TAG_PATTERN="Ras_tag"
 RAS_TAG=$(grep $RAS_TAG_PATTERN $SERVICE_CONF_FILE_PATH | cut -d"=" -f2-)
 if [ -z ${RAS_TAG// } ]; then
 	RAS_TAG="latest"
+fi
+ACCS_TAG_PATTERN="Accs_tag"
+ACCS_TAG=$(grep $ACCS_TAG_PATTERN $SERVICE_CONF_FILE_PATH | cut -d"=" -f2-)
+if [ -z ${ACCS_TAG// } ]; then
+	ACCS_TAG="latest"
 fi
 GUI_TAG_PATTERN="Gui_tag"
 GUI_TAG=$(grep $GUI_TAG_PATTERN $SERVICE_CONF_FILE_PATH | cut -d"=" -f2-)
@@ -63,14 +70,21 @@ sudo docker run -tdi --name fogbow-apache \
       -v $WORK_DIR/conf-files/apache/index.html:/var/www/html/index.html \
       fogbow/apache-shibboleth-server:$APACHE_TAG
 
+DATABASE_CONTAINER_NAME="fogbow-database"
+ACCS_DB_NAME="accs"
+POSTGRES_USER="postgres"
+
 sudo docker pull fogbow/database:$DB_TAG
-sudo docker run -tdi --name fogbow-database \
+sudo docker run -tdi --name $DATABASE_CONTAINER_NAME \
       -p $DB_PORT:5432 \
       -e DB_USER="fogbow" \
       -e DB_PASS="db_password" \
       -e DB_NAME="ras" \
       -v $WORK_DIR/data:/var/lib/postgresql/data \
       fogbow/database:$DB_TAG
+# FIXME this should be done at container creation time
+sleep 60
+sudo docker exec -u $POSTGRES_USER $DATABASE_CONTAINER_NAME createdb $ACCS_DB_NAME &>> log_db_accs
 
 sudo docker run -tdi --name fogbow-as \
       -p $AS_PORT:8080 \
@@ -89,10 +103,11 @@ sudo docker run -tdi --name fogbow-ras \
       -v $WORK_DIR/timestamp-storage/ras.db:/root/resource-allocation-service/ras.db \
       fogbow/resource-allocation-service:latest &>> log_ras
 
-sudo docker run -tdi --name fogbow-accounting-service \
-      -p 8083:8080 \
+sudo docker run -tdi --name fogbow-accs \
+      -p $ACCS_PORT:8080 \
       -v $WORK_DIR/conf-files/accs:/root/accounting-service/src/main/resources/private \
-      fogbow/accounting-service:latest &>> log_ms
+      -v $WORK_DIR/conf-files/accs/application.properties:/root/accounting-service/application.properties \
+      fogbow/accounting-service:latest &>> log_accs
 
 #sudo docker pull fogbow/fogbow-gui:$GUI_TAG
 sudo docker run -tdi --name fogbow-gui \
@@ -113,6 +128,13 @@ RAS_CONTAINER_NAME="fogbow-ras"
 
 sudo docker exec $RAS_CONTAINER_NAME /bin/bash -c "cat $BUILD_FILE_NAME >> $CONTAINER_RAS_CONF_FILE_PATH"
 sudo docker exec $RAS_CONTAINER_NAME /bin/bash -c "./mvnw spring-boot:run -X > log.out 2> log.err" &
+
+# Start ACCS
+CONTAINER_ACCS_CONF_FILE_PATH="src/main/resources/private/accs.conf"
+ACCS_CONTAINER_NAME="fogbow-accs"
+
+sudo docker exec $ACCS_CONTAINER_NAME /bin/bash -c "cat $BUILD_FILE_NAME >> $CONTAINER_ACCS_CONF_FILE_PATH"
+sudo docker exec $ACCS_CONTAINER_NAME /bin/bash -c "./mvnw spring-boot:run -X > log.out 2> log.err" &
 
 # Start Apache
 ENABLE_MODULES_SCRIPT="enable-modules"
