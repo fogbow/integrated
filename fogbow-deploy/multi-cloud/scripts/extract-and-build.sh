@@ -28,11 +28,11 @@ build_component_jar authentication-service
 build_component_jar membership-service
 build_component_jar resource-allocation-service
 build_component_jar accounting-service
-#build_component_jar resource-allocation-service
 
 build_component_image common
 build_component_image authentication-service
 build_component_image resource-allocation-service
 build_component_image membership-service
 build_component_image accounting-service
+build_component_image finance-service
 build_component_image fogbow-gui

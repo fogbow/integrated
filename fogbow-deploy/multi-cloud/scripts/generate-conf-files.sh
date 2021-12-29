@@ -3,6 +3,7 @@
 # Source configuration files
 CONF_FILES_DIR_PATH="../conf-files"
 AS_CONF_FILE_PATH=$CONF_FILES_DIR_PATH/"as.conf"
+FS_CONF_FILE_PATH=$CONF_FILES_DIR_PATH/"fs.conf"
 SERVICE_CONF_FILE_PATH=$CONF_FILES_DIR_PATH/"service.conf"
 HOST_CONF_FILE_PATH=$CONF_FILES_DIR_PATH/"host.conf"
 TEMPLATES_DIR_PATH="../templates"
@@ -19,6 +20,8 @@ RAS_PORT_PATTERN="Ras_port"
 RAS_PORT=$(grep $RAS_PORT_PATTERN $SERVICE_CONF_FILE_PATH | cut -d"=" -f2-)
 ACCS_PORT_PATTERN="Accs_port"
 ACCS_PORT=$(grep $ACCS_PORT_PATTERN $SERVICE_CONF_FILE_PATH | cut -d"=" -f2-)
+FS_PORT_PATTERN="Fs_port"
+FS_PORT=$(grep $FS_PORT_PATTERN $SERVICE_CONF_FILE_PATH | cut -d"=" -f2-)
 GUI_PORT_PATTERN="Gui_port"
 GUI_PORT=$(grep $GUI_PORT_PATTERN $SERVICE_CONF_FILE_PATH | cut -d"=" -f2-)
 DB_PORT_PATTERN="Db_port"
@@ -88,6 +91,37 @@ DSU=$(grep $DSU_PATTERN $AS_CONF_FILE_PATH | cut -d"=" -f2-)
 DSMU_PATTERN="discovery_service_metadata_url"
 DSMU=$(grep $DSMU_PATTERN $AS_CONF_FILE_PATH | cut -d"=" -f2-)
 
+## Reading data from fs.conf
+FS_MANAGER_USERNAME_PATTERN="manager_username"
+FS_MANAGER_USERNAME=$(grep $FS_MANAGER_USERNAME_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+FS_MANAGER_PASSWORD_PATTERN="manager_password"
+FS_MANAGER_PASSWORD=$(grep $FS_MANAGER_PASSWORD_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+FS_ADMIN_IDS_PATTERN="admin_ids"
+FS_ADMIN_IDS=$(grep $FS_ADMIN_IDS_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+
+FS_DEFAULT_PLAN_PLUGIN_TYPE_PATTERN="default_plan_plugin_type"
+FS_DEFAULT_PLAN_PLUGIN_TYPE=$(grep $FS_DEFAULT_PLAN_PLUGIN_TYPE_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+FS_PLAN_PLUGIN_NAME_PATTERN="plan_plugin_name"
+FS_PLAN_PLUGIN_NAME=$(grep $FS_PLAN_PLUGIN_NAME_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+FS_TIME_TO_WAIT_BEFORE_STOPPING_PATTERN="time_to_wait_before_stopping"
+FS_TIME_TO_WAIT_BEFORE_STOPPING=$(grep $FS_TIME_TO_WAIT_BEFORE_STOPPING_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+FS_DEFAULT_RESOURCE_VALUE_PATTERN="finance_plan_default_resource_value"
+FS_DEFAULT_RESOURCE_VALUE=$(grep $FS_DEFAULT_RESOURCE_VALUE_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+
+if [ "$FS_DEFAULT_PLAN_PLUGIN_TYPE" == "cloud.fogbow.fs.core.plugins.plan.postpaid.PostPaidPlanPlugin" ]; then
+	FS_BILLING_INTERVAL_PATTERN="billing_interval"
+	FS_BILLING_INTERVAL=$(grep $FS_BILLING_INTERVAL_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+	FS_INVOICE_WAIT_TIME_PATTERN="invoice_wait_time"
+	FS_INVOICE_WAIT_TIME=$(grep $FS_INVOICE_WAIT_TIME_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+elif [ "$FS_DEFAULT_PLAN_PLUGIN_TYPE" == "cloud.fogbow.fs.core.plugins.plan.prepaid.PrePaidPlanPlugin" ]; then
+	FS_CREDITS_DEDUCTION_WAIT_TIME_PATTERN="credits_deduction_wait_time"
+	FS_CREDITS_DEDUCTION_WAIT_TIME=$(grep $FS_CREDITS_DEDUCTION_WAIT_TIME_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+else
+    echo "Fatal error: invalid default finance plan type: [$FS_DEFAULT_PLAN_PLUGIN_TYPE]"
+    exit 1
+fi
+
+
 # Creating temporary directory
 mkdir -p ./tmp/conf-files
 
@@ -112,6 +146,7 @@ touch $PORTS_TAGS_CONF_FILE_PATH
 echo "$AS_PORT_PATTERN=$AS_PORT" > $PORTS_TAGS_CONF_FILE_PATH
 echo "$RAS_PORT_PATTERN=$RAS_PORT" >> $PORTS_TAGS_CONF_FILE_PATH
 echo "$ACCS_PORT_PATTERN=$ACCS_PORT" >> $PORTS_TAGS_CONF_FILE_PATH
+echo "$FS_PORT_PATTERN=$FS_PORT" >> $PORTS_TAGS_CONF_FILE_PATH
 echo "$GUI_PORT_PATTERN=$GUI_PORT" >> $PORTS_TAGS_CONF_FILE_PATH
 echo "$DB_PORT_PATTERN=$DB_PORT" >> $PORTS_TAGS_CONF_FILE_PATH
 echo "$HTTP_PORT_PATTERN=$HTTP_PORT" >> $PORTS_TAGS_CONF_FILE_PATH
@@ -277,6 +312,7 @@ mkdir -p $ACCS_DIR_PATH
 touch $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
 chmod 600 $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
 
+# TODO need to add keys for ACCS
 ## Copying application.properties file
 yes | cp -f $COMMON_TEMPLATES_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME".accs" $ACCS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
 chmod 600 $ACCS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
@@ -310,6 +346,80 @@ echo "$RAS_DB_DRIVER_CLASS_NAME_PROPERTY=$RAS_DB_DRIVER_CLASS_NAME" >> $ACCS_DIR
 echo "$RAS_DB_USERNAME_PROPERTY=$RAS_DB_USERNAME" >> $ACCS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
 echo "$RAS_DB_PASSWORD_PROPERTY=$DB_PASSWORD" >> $ACCS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
 
+# FS conf-file generation
+FS_DIR_PATH="./tmp/conf-files/fs"
+FS_CONF_FILE_NAME="fs.conf"
+FS_CONTAINER_CONF_FILE_DIR_PATH="/root/finance-service/src/main/resources/private"
+FS_PRIVATE_KEY_PATH=$FS_DIR_PATH/"id_rsa"
+FS_PUBLIC_KEY_PATH=$FS_DIR_PATH/"id_rsa.pub"
+FS_RSA_KEY_PATH=$FS_DIR_PATH/"rsa_key.pem"
+FS_DEFAULT_FINANCE_PLAN_FILE_NAME="default_fs_finance_plan"
+FS_DEFAULT_FINANCE_PLAN_FILE_PATH="../conf-files/$FS_DEFAULT_FINANCE_PLAN_FILE_NAME"
+
+## Creating directory
+mkdir -p $FS_DIR_PATH
+touch $FS_DIR_PATH/$FS_CONF_FILE_NAME
+chmod 600 $FS_DIR_PATH/$FS_CONF_FILE_NAME
+cp $FS_DEFAULT_FINANCE_PLAN_FILE_PATH $FS_DIR_PATH
+
+## Creating and adding key pair
+echo "" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+openssl genrsa -out $FS_RSA_KEY_PATH 2048
+openssl pkcs8 -topk8 -in $FS_RSA_KEY_PATH -out $FS_PRIVATE_KEY_PATH -nocrypt
+openssl rsa -in $FS_PRIVATE_KEY_PATH -outform PEM -pubout -out $FS_PUBLIC_KEY_PATH
+chmod 600 $FS_PRIVATE_KEY_PATH
+rm $FS_RSA_KEY_PATH
+
+## Adding properties
+echo "public_key_file_path="$FS_CONTAINER_CONF_FILE_DIR_PATH/"id_rsa.pub" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "private_key_file_path="$FS_CONTAINER_CONF_FILE_DIR_PATH/"id_rsa" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+# FIXME for now we use AdminAuthorizationPlugin, but this plugin is limited and
+# should be replaced by the RoleAuthorizationPlugin later.
+FS_AUTHORIZATION_PLUGIN="cloud.fogbow.fs.core.plugins.authorization.AdminAuthorizationPlugin"
+echo "authorization_plugin_class=$FS_AUTHORIZATION_PLUGIN" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "admin_ids=$FS_ADMIN_IDS" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+PROTOCOL="http://"
+echo "as_url=$PROTOCOL$SERVICE_HOST_IP" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "as_port=$AS_PORT" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "manager_username=$FS_MANAGER_USERNAME" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "manager_password=$FS_MANAGER_PASSWORD" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "accs_url=$PROTOCOL$SERVICE_HOST_IP" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "accs_port=$ACCS_PORT" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "ras_url=$PROTOCOL$SERVICE_HOST_IP" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "ras_port=$RAS_PORT" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "default_plan_plugin_type=$FS_DEFAULT_PLAN_PLUGIN_TYPE" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "plan_plugin_name=$FS_PLAN_PLUGIN_NAME" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+
+echo "finance_plan_file_path=src/main/resources/private/default_fs_finance_plan" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "time_to_wait_before_stopping=$FS_TIME_TO_WAIT_BEFORE_STOPPING" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "finance_plan_default_resource_value=$FS_DEFAULT_RESOURCE_VALUE" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+
+if [ "$FS_DEFAULT_PLAN_PLUGIN_TYPE" == "cloud.fogbow.fs.core.plugins.plan.postpaid.PostPaidPlanPlugin" ]; then
+	echo "billing_interval=$FS_BILLING_INTERVAL" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+	echo "invoice_wait_time=$FS_INVOICE_WAIT_TIME" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+else
+	echo "credits_deduction_wait_time$FS_CREDITS_DEDUCTION_WAIT_TIME" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+fi
+
+## Copying application.properties file
+yes | cp -f $COMMON_TEMPLATES_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME".fs" $FS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
+chmod 600 $FS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
+
+## Editing application.properties
+JDBC_PREFIX="jdbc:postgresql:"
+FS_DB_ENDPOINT="fs"
+DB_URL_PROPERTY="spring.datasource.url"
+DB_URL=$JDBC_PREFIX"//"$SERVICE_HOST_IP":"$DB_PORT"/"$FS_DB_ENDPOINT
+echo "" >> $RAS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
+echo "$DB_URL_PROPERTY=$DB_URL" >> $FS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
+DB_USERNAME="fogbow"
+DB_USERNAME_PATTERN="spring.datasource.username"
+echo "$DB_USERNAME_PATTERN=$DB_USERNAME" >> $FS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
+DB_PASSWORD_PATTERN="spring.datasource.password"
+echo "$DB_PASSWORD_PATTERN=$DB_PASSWORD" >> $FS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
 
 # GUI conf-file generation
 ## Setting AS variables
