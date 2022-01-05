@@ -96,6 +96,9 @@ FS_MANAGER_USERNAME_PATTERN="manager_username"
 FS_MANAGER_USERNAME=$(grep $FS_MANAGER_USERNAME_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
 FS_MANAGER_PASSWORD_PATTERN="manager_password"
 FS_MANAGER_PASSWORD=$(grep $FS_MANAGER_PASSWORD_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+FS_MANAGER_PROVIDER_ID_PATTERN="provider_id"
+FS_MANAGER_PROVIDER_ID=$(grep $FS_MANAGER_PROVIDER_ID_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+
 FS_ADMIN_IDS_PATTERN="admin_ids"
 FS_ADMIN_IDS=$(grep $FS_ADMIN_IDS_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
 
@@ -378,13 +381,14 @@ echo "" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 # should be replaced by the RoleAuthorizationPlugin later.
 FS_AUTHORIZATION_PLUGIN="cloud.fogbow.fs.core.plugins.authorization.AdminAuthorizationPlugin"
 echo "authorization_plugin_class=$FS_AUTHORIZATION_PLUGIN" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
-echo "admin_ids=$FS_ADMIN_IDS" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "admins_ids=$FS_ADMIN_IDS" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 echo "" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 PROTOCOL="http://"
 echo "as_url=$PROTOCOL$SERVICE_HOST_IP" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 echo "as_port=$AS_PORT" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 echo "manager_username=$FS_MANAGER_USERNAME" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 echo "manager_password=$FS_MANAGER_PASSWORD" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+echo "provider_id=$FS_MANAGER_PROVIDER_ID" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 echo "accs_url=$PROTOCOL$SERVICE_HOST_IP" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 echo "accs_port=$ACCS_PORT" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 echo "ras_url=$PROTOCOL$SERVICE_HOST_IP" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME

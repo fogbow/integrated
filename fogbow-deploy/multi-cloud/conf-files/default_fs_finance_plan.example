@@ -1,0 +1,2 @@
+rule1-compute,FULFILLED,1,2,0.1/s
+rule2-volume,FULFILLED,40,0.1/h

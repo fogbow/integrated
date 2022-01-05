@@ -1,0 +1,8 @@
+# Valid order state values: OPEN, SELECTED, PENDING, SPAWNING, FULFILLED, FAILED_AFTER_SUCCESSFUL_REQUEST,
+# FAILED_ON_REQUEST, UNABLE_TO_CHECK_STATUS, ASSIGNED_FOR_DELETION, CHECKING_DELETION, CLOSED, PAUSED, HIBERNATED,
+# PAUSING, HIBERNATING, RESUMING, STOPPED, STOPPING
+#
+# valid time units: ms (milliseconds), s (seconds), m (minutes), h (hours)
+#
+<rule name>-compute,<order state>,<vcpus>,<memory>,<cost per time unit>
+<rule name>-volume,<order state>,<size>,<cost per time unit>

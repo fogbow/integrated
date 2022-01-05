@@ -152,7 +152,7 @@ sudo docker exec $ACCS_CONTAINER_NAME /bin/bash -c "cat $BUILD_FILE_NAME >> $CON
 sudo docker exec $ACCS_CONTAINER_NAME /bin/bash -c "./mvnw spring-boot:run -X > log.out 2> log.err" &
 
 # Start FS
-CONTAINER_ACCS_CONF_FILE_PATH="src/main/resources/private/fs.conf"
+CONTAINER_FS_CONF_FILE_PATH="src/main/resources/private/fs.conf"
 FS_CONTAINER_NAME="fogbow-fs"
 
 sudo docker exec $FS_CONTAINER_NAME /bin/bash -c "cat $BUILD_FILE_NAME >> $CONTAINER_FS_CONF_FILE_PATH"

@@ -28,6 +28,7 @@ build_component_jar authentication-service
 build_component_jar membership-service
 build_component_jar resource-allocation-service
 build_component_jar accounting-service
+cd "components_archives/accounting-service" && mvn install -Dmaven.test.skip=true -f pom-jar.xml >> log_accs_jar && cd ../..
 
 build_component_image common
 build_component_image authentication-service
