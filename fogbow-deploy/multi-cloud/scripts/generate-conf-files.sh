@@ -315,7 +315,14 @@ mkdir -p $ACCS_DIR_PATH
 touch $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
 chmod 600 $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
 
-# TODO need to add keys for ACCS
+## Creating and adding key pair
+echo "" >> $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
+openssl genrsa -out $ACCS_RSA_KEY_PATH 2048
+openssl pkcs8 -topk8 -in $ACCS_RSA_KEY_PATH -out $ACCS_PRIVATE_KEY_PATH -nocrypt
+openssl rsa -in $ACCS_PRIVATE_KEY_PATH -outform PEM -pubout -out $ACCS_PUBLIC_KEY_PATH
+chmod 600 $ACCS_PRIVATE_KEY_PATH
+rm $ACCS_RSA_KEY_PATH
+
 ## Copying application.properties file
 yes | cp -f $COMMON_TEMPLATES_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME".accs" $ACCS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
 chmod 600 $ACCS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME

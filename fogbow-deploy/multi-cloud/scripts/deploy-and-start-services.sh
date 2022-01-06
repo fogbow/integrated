@@ -100,11 +100,6 @@ sudo docker run -tdi --name fogbow-as \
       -v $WORK_DIR/conf-files/as:/root/authentication-service/src/main/resources/private \
       fogbow/authentication-service:latest &>> log_as
 
-#sudo docker run -tdi --name fogbow-ms \
-#      -p 8081 \
-#      -v $WORK_DIR/conf-files/ms:/root/membership-service/src/main/resources/private \
-#      fogbow/membership-service:latest &>> log_ms
-
 sudo docker run -tdi --name fogbow-ras \
       -p $RAS_PORT:8080 \
       -v $WORK_DIR/conf-files/ras:/root/resource-allocation-service/src/main/resources/private \

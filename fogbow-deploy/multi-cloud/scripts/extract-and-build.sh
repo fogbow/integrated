@@ -1,39 +1,26 @@
 #!/bin/bash
 
-function extract_component {
-        tar -xzf "components_archives/$1.tar.gz" -C "components_archives" >> log_extract
+function extract_components {
+	for component in $*; do
+		tar -xzf "components_archives/$component.tar.gz" -C "components_archives" >> log_extract
+	done
 }
 
-function build_component_image {
-	cd "components_archives/$1" && ./build >> log_build && cd ../..
+function build_components_jars {
+	for component in $*; do
+		cd "components_archives/$component" && mvn install -Dmaven.test.skip=true >> log_jar && cd ../.. 
+	done
 }
 
-function build_component_jar {
-	cd "components_archives/$1" && mvn install -Dmaven.test.skip=true >> log_jar && cd ../.. 
+function build_components_images {
+	for component in $*; do
+		cd "components_archives/$component" && ./build >> log_build && cd ../..
+	done
 }
 
-extract_component accounting-service
-extract_component authentication-service
-extract_component common
-extract_component federated-network-service
-extract_component finance-service
-extract_component fogbow-gui
-extract_component membership-service
-extract_component resource-allocation-service
-extract_component resource-catalog-gui
-extract_component resource-catalog-service
+extract_components accounting-service authentication-service common federated-network-service finance-service fogbow-gui membership-service resource-allocation-service
 
-build_component_jar common
-build_component_jar authentication-service
-build_component_jar membership-service
-build_component_jar resource-allocation-service
-build_component_jar accounting-service
+build_components_jars common authentication-service membership-service resource-allocation-service accounting-service
 cd "components_archives/accounting-service" && mvn install -Dmaven.test.skip=true -f pom-jar.xml >> log_accs_jar && cd ../..
 
-build_component_image common
-build_component_image authentication-service
-build_component_image resource-allocation-service
-build_component_image membership-service
-build_component_image accounting-service
-build_component_image finance-service
-build_component_image fogbow-gui
+build_components_images common authentication-service resource-allocation-service membership-service accounting-service finance-service fogbow-gui
