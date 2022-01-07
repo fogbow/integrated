@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import cloud.fogbow.accs.api.http.request.Version;
 import cloud.fogbow.accs.constants.Messages;
 import cloud.fogbow.accs.constants.SystemConstants;
-import cloud.fogbow.accs.core.ApplicationFacade;
+import cloud.fogbow.accs.core.BuildNumberHolder;
 import cloud.fogbow.common.constants.ApiDocumentation;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,8 +30,9 @@ public class Version {
     public ResponseEntity<cloud.fogbow.accs.api.http.response.Version> getVersion() {
 
         LOGGER.info(Messages.Info.RECEIVING_GET_VERSION_REQUEST);
-        String versionNumber = ApplicationFacade.getInstance().getVersionNumber();
-        cloud.fogbow.accs.api.http.response.Version version = new cloud.fogbow.accs.api.http.response.Version(versionNumber);
-        return new ResponseEntity<>(version, HttpStatus.OK);
+        String buildNumber = BuildNumberHolder.getInstance().getBuildNumber();
+        String versionNumber = SystemConstants.API_VERSION_NUMBER + "-" + buildNumber;
+        return new ResponseEntity<>(
+                new cloud.fogbow.accs.api.http.response.Version(versionNumber), HttpStatus.OK);
     }
 }

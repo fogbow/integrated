@@ -23,4 +23,10 @@ public class Messages {
 		public static final String FINISHING_UPDATE = "Finishing update.";
 		public static final String UPDATING_PROBLEMS = "Problem on updating %s.";
 	}
+	
+	public static class Log {
+        public static final String PROPERTY_FILE_S_NOT_FOUND = "Property file '%s' not found.";
+        public static final String UNABLE_TO_CLOSE_FILE_S = "Unable to close file '%s'.";
+	    
+	}
 }
