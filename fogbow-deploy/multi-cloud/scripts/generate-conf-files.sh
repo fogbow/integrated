@@ -4,6 +4,7 @@
 CONF_FILES_DIR_PATH="../conf-files"
 AS_CONF_FILE_PATH=$CONF_FILES_DIR_PATH/"as.conf"
 FS_CONF_FILE_PATH=$CONF_FILES_DIR_PATH/"fs.conf"
+ACCS_CONF_FILE_PATH=$CONF_FILES_DIR_PATH/"accs.conf"
 SERVICE_CONF_FILE_PATH=$CONF_FILES_DIR_PATH/"service.conf"
 HOST_CONF_FILE_PATH=$CONF_FILES_DIR_PATH/"host.conf"
 TEMPLATES_DIR_PATH="../templates"
@@ -124,6 +125,9 @@ else
     exit 1
 fi
 
+## Reading data from accs.conf
+ACCS_MANAGER_USERNAME_PATTERN="manager_username"
+ACCS_MANAGER_USERNAME=$(grep $ACCS_MANAGER_USERNAME_PATTERN $ACCS_CONF_FILE_PATH | cut -d"=" -f2-)
 
 # Creating temporary directory
 mkdir -p ./tmp/conf-files
@@ -305,6 +309,7 @@ mkdir -p $MS_DIR_PATH
 # ACCS conf-file generation
 ACCS_DIR_PATH="./tmp/conf-files/accs"
 ACCS_CONF_FILE_NAME="accs.conf"
+ACCS_ADMINS_FILE_NAME="white-list.conf"
 ACCS_CONTAINER_CONF_FILE_DIR_PATH="/root/accounting-service/src/main/resources/private"
 ACCS_PRIVATE_KEY_PATH=$ACCS_DIR_PATH/"id_rsa"
 ACCS_PUBLIC_KEY_PATH=$ACCS_DIR_PATH/"id_rsa.pub"
@@ -313,7 +318,9 @@ ACCS_RSA_KEY_PATH=$ACCS_DIR_PATH/"rsa_key.pem"
 ## Creating directory
 mkdir -p $ACCS_DIR_PATH
 touch $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
+touch $ACCS_DIR_PATH/$ACCS_ADMINS_FILE_NAME
 chmod 600 $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
+chmod 600 $ACCS_DIR_PATH/$ACCS_ADMINS_FILE_NAME
 
 ## Creating and adding key pair
 echo "" >> $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
@@ -322,6 +329,16 @@ openssl pkcs8 -topk8 -in $ACCS_RSA_KEY_PATH -out $ACCS_PRIVATE_KEY_PATH -nocrypt
 openssl rsa -in $ACCS_PRIVATE_KEY_PATH -outform PEM -pubout -out $ACCS_PUBLIC_KEY_PATH
 chmod 600 $ACCS_PRIVATE_KEY_PATH
 rm $ACCS_RSA_KEY_PATH
+
+## Adding properties
+echo "public_key_file_path="$ACCS_CONTAINER_CONF_FILE_DIR_PATH/"id_rsa.pub" >> $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
+echo "private_key_file_path="$ACCS_CONTAINER_CONF_FILE_DIR_PATH/"id_rsa" >> $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
+echo "" >> $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
+PROTOCOL="http://"
+echo "as_url=$PROTOCOL$SERVICE_HOST_IP" >> $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
+echo "as_port=$AS_PORT" >> $ACCS_DIR_PATH/$ACCS_CONF_FILE_NAME
+
+echo "allowed_users=$ACCS_MANAGER_USERNAME" >> $ACCS_DIR_PATH/$ACCS_ADMINS_FILE_NAME
 
 ## Copying application.properties file
 yes | cp -f $COMMON_TEMPLATES_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME".accs" $ACCS_DIR_PATH/$APPLICATION_PROPERTIES_FILE_NAME
