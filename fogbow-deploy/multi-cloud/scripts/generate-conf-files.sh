@@ -111,6 +111,8 @@ FS_TIME_TO_WAIT_BEFORE_STOPPING_PATTERN="time_to_wait_before_stopping"
 FS_TIME_TO_WAIT_BEFORE_STOPPING=$(grep $FS_TIME_TO_WAIT_BEFORE_STOPPING_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
 FS_DEFAULT_RESOURCE_VALUE_PATTERN="finance_plan_default_resource_value"
 FS_DEFAULT_RESOURCE_VALUE=$(grep $FS_DEFAULT_RESOURCE_VALUE_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
+FS_TIME_ZONE_PATTERN="time_zone"
+FS_TIME_ZONE=$(grep $FS_TIME_ZONE_PATTERN $FS_CONF_FILE_PATH | cut -d"=" -f2-)
 
 if [ "$FS_DEFAULT_PLAN_PLUGIN_TYPE" == "cloud.fogbow.fs.core.plugins.plan.postpaid.PostPaidPlanPlugin" ]; then
 	FS_BILLING_INTERVAL_PATTERN="billing_interval"
@@ -424,6 +426,8 @@ echo "plan_plugin_name=$FS_PLAN_PLUGIN_NAME" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 echo "finance_plan_file_path=src/main/resources/private/default_fs_finance_plan" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 echo "time_to_wait_before_stopping=$FS_TIME_TO_WAIT_BEFORE_STOPPING" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 echo "finance_plan_default_resource_value=$FS_DEFAULT_RESOURCE_VALUE" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+
+echo "time_zone=$FS_TIME_ZONE" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 
 if [ "$FS_DEFAULT_PLAN_PLUGIN_TYPE" == "cloud.fogbow.fs.core.plugins.plan.postpaid.PostPaidPlanPlugin" ]; then
 	echo "billing_interval=$FS_BILLING_INTERVAL" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
