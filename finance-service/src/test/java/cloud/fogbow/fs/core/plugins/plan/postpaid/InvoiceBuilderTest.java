@@ -35,6 +35,9 @@ public class InvoiceBuilderTest {
 	private static final OrderState STATE_1 = OrderState.FULFILLED;
 	private static final OrderState STATE_2 = OrderState.CLOSED;
 	private static final OrderState STATE_3 = OrderState.PAUSED;
+    private static final String ORDER_ID_1 = "orderId1";
+    private static final String ORDER_ID_2 = "orderId2";
+    private static final String ORDER_ID_3 = "orderId3";
 
     // test case: When calling the buildInvoice method, 
     // it must create a new Invoice object, considering the
@@ -49,9 +52,9 @@ public class InvoiceBuilderTest {
         
         invoiceBuilder.setUserId(USER_ID_1);
         invoiceBuilder.setProviderId(PROVIDER_ID_1);
-        invoiceBuilder.addItem(resourceItem1, STATE_1, VALUE_ITEM_1, TIME_USED_ITEM_1);
-        invoiceBuilder.addItem(resourceItem2, STATE_2, VALUE_ITEM_2, TIME_USED_ITEM_2);
-        invoiceBuilder.addItem(resourceItem3, STATE_3, VALUE_ITEM_3, TIME_USED_ITEM_3);
+        invoiceBuilder.addItem(ORDER_ID_1, resourceItem1, STATE_1, VALUE_ITEM_1, TIME_USED_ITEM_1);
+        invoiceBuilder.addItem(ORDER_ID_2, resourceItem2, STATE_2, VALUE_ITEM_2, TIME_USED_ITEM_2);
+        invoiceBuilder.addItem(ORDER_ID_3, resourceItem3, STATE_3, VALUE_ITEM_3, TIME_USED_ITEM_3);
         Invoice invoice = invoiceBuilder.buildInvoice();
         
         List<Double> possibleValues = new ArrayList<Double>();
@@ -105,7 +108,7 @@ public class InvoiceBuilderTest {
         
         invoiceBuilder.setUserId(USER_ID_1);
         invoiceBuilder.setProviderId(PROVIDER_ID_1);
-        invoiceBuilder.addItem(resourceItem1, STATE_1, VALUE_ITEM_1, TIME_USED_ITEM_1);
+        invoiceBuilder.addItem(ORDER_ID_1, resourceItem1, STATE_1, VALUE_ITEM_1, TIME_USED_ITEM_1);
         Invoice invoice1 = invoiceBuilder.buildInvoice();
         
         assertEquals(USER_ID_1, invoice1.getUserId());

@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Set;
 import java.util.TreeMap;
 
 import cloud.fogbow.accs.api.http.response.Record;
@@ -74,20 +75,29 @@ public class RecordUtils {
 
 	private NavigableMap<Timestamp, OrderState> filterStatesByPeriod(Map<Timestamp, OrderState> history, Long paymentStartTime,
 			Long paymentEndTime) throws InvalidParameterException {
-		Timestamp lowerLimit = getLowerLimit(history, paymentStartTime);
-		Timestamp higherLimit = getHighestTimestampBeforeTime(history, paymentEndTime);
-		
-		// if the state history of the Record contains no state change before or on the paymentStartTime, then
-	    // it is impossible to determine the Record state in the beginning of the payment period. 
-		if (lowerLimit == null) {
+		Timestamp lowestStateChangeTimestamp = getLowerLimit(history, paymentStartTime);
+		Timestamp highestStateChangeTimestamp = getHighestTimestampBeforeTime(history, paymentEndTime);
+
+		if (lowestStateChangeTimestamp == null) {
 			throw new InvalidParameterException(Messages.Exception.INVALID_RECORD_HISTORY);
 		} else {
 			TreeMap<Timestamp, OrderState> filteredState = new TreeMap<Timestamp, OrderState>();
-			OrderState startState = history.get(lowerLimit);
-			OrderState endState = history.get(higherLimit);
+			OrderState startState = history.get(lowestStateChangeTimestamp);
+			OrderState endState = history.get(highestStateChangeTimestamp);
 			
-			filteredState.put(new Timestamp(paymentStartTime), startState);
-			filteredState.put(new Timestamp(paymentEndTime), endState);
+			// if the first state change occurs before the period start time, then the Record
+			// was created in the period and the history must start in the first state change time
+			// (since there is no state to account for before the first change).
+			// Otherwise, the history must start in the period start time.
+			Timestamp periodLowestLimit = lowestStateChangeTimestamp.getTime() < paymentStartTime ? 
+			        new Timestamp(paymentStartTime) : lowestStateChangeTimestamp;
+			filteredState.put(periodLowestLimit,startState);
+
+			// if the order was closed in the period, then CLOSED must be the last state in the history
+			// and the remaining time in the period must not be considered for billing.
+			if (endState != OrderState.CLOSED) {
+			    filteredState.put(new Timestamp(paymentEndTime), endState);			    
+			}
 			
 			for (Timestamp timestamp : history.keySet()) {
 				if (timestamp.getTime() >= paymentStartTime 
@@ -100,17 +110,33 @@ public class RecordUtils {
 		}
 	}
 
-	// if the first state of a resource is mapped to a timestamp exactly equal to the payment start time, 
-	// then it is the lower limit time of the payment.
     private Timestamp getLowerLimit(Map<Timestamp, OrderState> history, Long paymentStartTime) {
-		if (history.containsKey(new Timestamp(paymentStartTime))) {
-		    return new Timestamp(paymentStartTime);
-		} else {
-		    return getHighestTimestampBeforeTime(history, paymentStartTime);
-		}
+        Timestamp lowest = getHighestTimestampBeforeTime(history, paymentStartTime);
+        
+        if (lowest != null) {
+            return lowest;
+        } else { 
+            return getLowestTimestamp(history.keySet());
+        }
     }
 
-	private Timestamp getHighestTimestampBeforeTime(Map<Timestamp, OrderState> history, Long time) {
+	private Timestamp getLowestTimestamp(Set<Timestamp> keySet) {
+	    Timestamp lowest = null;
+	    
+        for (Timestamp timestamp : keySet) {
+            if (lowest == null) {
+                lowest = timestamp;
+            } else {
+                if (timestamp.getTime() < lowest.getTime()) {
+                    lowest = timestamp;
+                }
+            }
+        }
+        
+        return lowest;
+    }
+
+    private Timestamp getHighestTimestampBeforeTime(Map<Timestamp, OrderState> history, Long time) {
 		Timestamp highestTimestamp = null;
 		
 		for (Timestamp timestamp : history.keySet()) {

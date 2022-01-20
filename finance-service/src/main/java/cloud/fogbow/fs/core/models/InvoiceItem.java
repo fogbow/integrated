@@ -30,6 +30,9 @@ public class InvoiceItem {
     private ResourceItem item;
     
     @Column
+    private String orderId;
+    
+    @Column
     private Double value;
     
     @Column
@@ -50,6 +53,13 @@ public class InvoiceItem {
     	this.setOrderState(state);
         this.value = value;
 	}
+    
+    public InvoiceItem(String orderId, ResourceItem item, OrderState state, Double value) {
+        this.orderId = orderId;
+        this.item = item;
+        this.setOrderState(state);
+        this.value = value;
+    }
 
 	public ResourceItem getItem() {
         return item;
@@ -74,4 +84,12 @@ public class InvoiceItem {
 	public void setOrderState(OrderState orderState) {
 		this.orderState = orderState;
 	}
+	
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 }

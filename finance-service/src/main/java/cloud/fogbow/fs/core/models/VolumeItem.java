@@ -63,4 +63,9 @@ public class VolumeItem extends ResourceItem {
 	public String toString() {
 		return "{\"type\":\"volume\", \"size\":" + size + "}";
 	}
+
+    @Override
+    String repr() {
+        return String.format("volume-size:%d", this.size);
+    }
 }

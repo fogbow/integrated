@@ -1,17 +1,16 @@
 package cloud.fogbow.fs.core.plugins.plan.postpaid;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.util.Pair;
-
 import cloud.fogbow.fs.core.models.Invoice;
+import cloud.fogbow.fs.core.models.InvoiceItem;
 import cloud.fogbow.fs.core.models.ResourceItem;
 import cloud.fogbow.ras.core.models.orders.OrderState;
 
 public class InvoiceBuilder {
-	private Map<Pair<ResourceItem, OrderState>, Double> items;
+	private List<InvoiceItem> items;
 	private String userId;
 	private String providerId;
 	private Double invoiceTotal;
@@ -19,7 +18,7 @@ public class InvoiceBuilder {
 	private Long endTime;
 	
 	public InvoiceBuilder() {
-		this.items = new HashMap<Pair<ResourceItem, OrderState>, Double>();
+		this.items = new ArrayList<InvoiceItem>();
 		invoiceTotal = 0.0;
 	}
 
@@ -39,9 +38,9 @@ public class InvoiceBuilder {
 	    this.endTime = endTime;
 	}
 	
-	public void addItem(ResourceItem resourceItem, OrderState state, Double valueToPayPerTimeUnit, Double timeUsed) {
+	public void addItem(String orderId, ResourceItem resourceItem, OrderState state, Double valueToPayPerTimeUnit, Double timeUsed) {
 		Double itemValue = valueToPayPerTimeUnit * timeUsed;
-		items.put(Pair.of(resourceItem, state), itemValue);
+		items.add(new InvoiceItem(orderId, resourceItem, state, itemValue));
 		invoiceTotal += itemValue;
 	}
 
@@ -53,7 +52,7 @@ public class InvoiceBuilder {
 	public void reset() {
 		this.userId = null;
 		this.providerId = null;
-		this.items = new HashMap<Pair<ResourceItem, OrderState>, Double>();
+		this.items = new ArrayList<InvoiceItem>();
 		this.invoiceTotal = 0.0;
 	}
 }

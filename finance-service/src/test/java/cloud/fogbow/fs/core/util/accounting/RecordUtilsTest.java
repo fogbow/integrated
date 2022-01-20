@@ -141,9 +141,11 @@ public class RecordUtilsTest {
     	this.paymentStartTime = 100L;
         this.paymentEndTime = 200L;
 
-        this.history = getHistory(getTimestamps(this.paymentStartTime - 10, 
+        this.history = getHistory(getTimestamps(this.paymentStartTime - 40,
+                                                this.paymentStartTime - 10, 
         										this.paymentEndTime + 10), 
-        						  getOrderStates(cloud.fogbow.accs.core.models.orders.OrderState.FULFILLED, 
+        						  getOrderStates(cloud.fogbow.accs.core.models.orders.OrderState.STOPPED,
+        						                 cloud.fogbow.accs.core.models.orders.OrderState.FULFILLED, 
         								  		 cloud.fogbow.accs.core.models.orders.OrderState.PAUSED));
     	setUpRecords();
     	
@@ -168,11 +170,13 @@ public class RecordUtilsTest {
     	this.paymentStartTime = 100L;
         this.paymentEndTime = 200L;
 
-        this.history = getHistory(getTimestamps(this.paymentStartTime - 10, 
+        this.history = getHistory(getTimestamps(this.paymentStartTime - 40,
+                                                this.paymentStartTime - 10, 
 												this.paymentStartTime + 20, 
 												this.paymentStartTime + 50, 
 												this.paymentEndTime + 10), 
-        						  getOrderStates(cloud.fogbow.accs.core.models.orders.OrderState.FULFILLED, 
+        						  getOrderStates(cloud.fogbow.accs.core.models.orders.OrderState.STOPPED,
+        						                 cloud.fogbow.accs.core.models.orders.OrderState.FULFILLED, 
         								  		 cloud.fogbow.accs.core.models.orders.OrderState.PAUSED, 
         								  		 cloud.fogbow.accs.core.models.orders.OrderState.FULFILLED, 
         								  		 cloud.fogbow.accs.core.models.orders.OrderState.HIBERNATED));
@@ -192,10 +196,10 @@ public class RecordUtilsTest {
     
     // test case: When calling the getRecordStateHistoryOnPeriod method, if the state history of 
     // the Record passed as parameter contains no state change before or on the paymentStartTime, then
-    // it is impossible to determine the Record state in the beginning of the payment period. Thus, 
-    // the method must throw an InvalidParameterException.
-    @Test(expected = InvalidParameterException.class)
-    public void testGetRecordStateHistoryOnPeriodInvalidStateHistory() throws InvalidParameterException {
+    // the Record was created in the period and the lowest timestamp in the response map must be the first order state
+    // in the Record history.
+    @Test
+    public void testGetRecordStateHistoryOnPeriodOrderCreatedInPeriod() throws InvalidParameterException {
         this.paymentStartTime = 100L;
         this.paymentEndTime = 200L;
 
@@ -209,7 +213,40 @@ public class RecordUtilsTest {
         setUpRecords();
         
         this.recordUtils = new RecordUtils();
-        this.recordUtils.getRecordStateHistoryOnPeriod(record, paymentStartTime, paymentEndTime);
+        Map<Timestamp, OrderState> response = this.recordUtils.getRecordStateHistoryOnPeriod(record, paymentStartTime, paymentEndTime);
+        
+        assertEquals(3, response.size());
+        assertEquals(OrderState.PAUSED, response.get(new Timestamp(this.paymentStartTime + 20)));
+        assertEquals(OrderState.FULFILLED, response.get(new Timestamp(this.paymentStartTime + 50)));
+        assertEquals(OrderState.FULFILLED, response.get(new Timestamp(this.paymentEndTime)));
+    }
+    
+    // test case: When calling the getRecordStateHistoryOnPeriod method, if the state history of 
+    // the Record passed as parameter contains no state change before or on the paymentStartTime, then
+    // the Record was created in the period and the lowest timestamp in the response map must be the first order state
+    // in the Record history. Also, if the last state is CLOSED, then the Record was closed in the period. Hence,
+    // the time between the state change to CLOSED and the end of the billing period must not be considered.
+    @Test
+    public void testGetRecordStateHistoryOnPeriodOrderCreatedAndClosedInPeriod() throws InvalidParameterException {
+        this.paymentStartTime = 100L;
+        this.paymentEndTime = 200L;
+
+        this.history = getHistory(getTimestamps(this.paymentStartTime + 20, 
+                                                this.paymentStartTime + 50, 
+                                                this.paymentEndTime - 10), 
+                                  getOrderStates(cloud.fogbow.accs.core.models.orders.OrderState.PAUSED, 
+                                                 cloud.fogbow.accs.core.models.orders.OrderState.FULFILLED, 
+                                                 cloud.fogbow.accs.core.models.orders.OrderState.CLOSED));
+        
+        setUpRecords();
+        
+        this.recordUtils = new RecordUtils();
+        Map<Timestamp, OrderState> response = this.recordUtils.getRecordStateHistoryOnPeriod(record, paymentStartTime, paymentEndTime);
+        
+        assertEquals(3, response.size());
+        assertEquals(OrderState.PAUSED, response.get(new Timestamp(this.paymentStartTime + 20)));
+        assertEquals(OrderState.FULFILLED, response.get(new Timestamp(this.paymentStartTime + 50)));
+        assertEquals(OrderState.CLOSED, response.get(new Timestamp(this.paymentEndTime - 10)));
     }
     
     private void setUpRecords() {

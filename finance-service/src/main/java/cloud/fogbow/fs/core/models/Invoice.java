@@ -2,7 +2,6 @@ package cloud.fogbow.fs.core.models;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,11 +16,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.data.util.Pair;
 
 import cloud.fogbow.common.exceptions.InvalidParameterException;
 import cloud.fogbow.fs.constants.Messages;
-import cloud.fogbow.ras.core.models.orders.OrderState;
 
 @Entity
 @Table(name = "invoice_table")
@@ -69,7 +66,7 @@ public class Invoice {
     }
     
 	public Invoice(String invoiceId, String userId, String providerId, 
-			Long startTime, Long endTime, Map<Pair<ResourceItem, OrderState>, Double> items, 
+			Long startTime, Long endTime, List<InvoiceItem> items, 
 			Double invoiceTotal) {
 		this.invoiceId = invoiceId;
 		this.userId = userId;
@@ -78,12 +75,7 @@ public class Invoice {
 		this.endTime = endTime;
 		this.state = InvoiceState.WAITING;
 		this.invoiceTotal = invoiceTotal;
-		
-		this.invoiceItems = new ArrayList<InvoiceItem>();
-		
-		for (Pair<ResourceItem, OrderState> item : items.keySet()) {
-		    invoiceItems.add(new InvoiceItem(item.getFirst(), item.getSecond(), items.get(item)));
-		}
+		this.invoiceItems = items;
 	}
 
 	public List<InvoiceItem> getInvoiceItemsList() {
@@ -204,10 +196,11 @@ public class Invoice {
         List<String> invoiceItemsStringList = new ArrayList<String>();
 		
 		for (InvoiceItem invoiceItem : invoiceItems) {
-            String itemString = invoiceItem.getItem().toString();
+		    String orderId = invoiceItem.getOrderId();
+            String itemString = invoiceItem.getItem().repr();
             String orderStateString = invoiceItem.getOrderState().getValue();
             String valueString = String.format("%.3f", invoiceItem.getValue());
-            String itemValuePairString = itemString + "-" + orderStateString + ":" + valueString;
+            String itemValuePairString = String.format("\"%s-%s-%s\":%s", orderId, itemString, orderStateString, valueString);
             invoiceItemsStringList.add(itemValuePairString);
 		}
 		

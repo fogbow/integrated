@@ -2,18 +2,15 @@ package cloud.fogbow.fs.core.models;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.data.util.Pair;
 
 import cloud.fogbow.common.exceptions.InvalidParameterException;
 import cloud.fogbow.fs.core.util.TestUtils;
@@ -32,10 +29,11 @@ public class InvoiceTest {
     private static final Long END_TIME = 10L;
 	private static final OrderState STATE_1 = OrderState.FULFILLED;
 	private static final OrderState STATE_2 = OrderState.PAUSED;
+    private static final String ORDER_ID_1 = "orderId1";
+    private static final String ORDER_ID_2 = "orderId2";
     
-    private Map<Pair<ResourceItem, OrderState>, Double> invoiceItems;
+    private List<InvoiceItem> invoiceItems;
     private Double invoiceTotal;
-    private Set<Pair<ResourceItem, OrderState>> itemsSet;
 
     @Before
     public void setUp() {
@@ -44,7 +42,7 @@ public class InvoiceTest {
     
     @Test
     public void testToStringWithNoInvoiceItems() {
-        invoiceItems = new HashMap<Pair<ResourceItem, OrderState>, Double>();
+        invoiceItems = new ArrayList<InvoiceItem>();
         invoiceTotal = 0.0;
         
         
@@ -62,11 +60,10 @@ public class InvoiceTest {
     public void testToString() {
         Invoice invoice = new Invoice(INVOICE_ID, USER_ID, PROVIDER_ID, START_TIME, END_TIME, invoiceItems, invoiceTotal);
         
-        
         String expected = String.format("{\"id\":\"%s\", \"userId\":\"%s\", \"providerId\":\"%s\", \"state\":\"WAITING\"," + 
-        " \"invoiceItems\":{%s-%s:%.3f,%s-%s:%.3f}, \"invoiceTotal\":%.3f, \"startTime\":1, \"endTime\":10}", INVOICE_ID, 
-                USER_ID, PROVIDER_ID, RESOURCE_ITEM_1_STRING, STATE_1.getValue(), RESOURCE_ITEM_1_VALUE, 
-                RESOURCE_ITEM_2_STRING, STATE_2.getValue(), RESOURCE_ITEM_2_VALUE, invoiceTotal);
+        " \"invoiceItems\":{\"%s-%s-%s\":%.3f,\"%s-%s-%s\":%.3f}, \"invoiceTotal\":%.3f, \"startTime\":1, \"endTime\":10}", INVOICE_ID, 
+                USER_ID, PROVIDER_ID, ORDER_ID_1, RESOURCE_ITEM_1_STRING, STATE_1.getValue(), RESOURCE_ITEM_1_VALUE, 
+                ORDER_ID_2, RESOURCE_ITEM_2_STRING, STATE_2.getValue(), RESOURCE_ITEM_2_VALUE, invoiceTotal);
         
         assertEquals(expected, invoice.toString());
     }
@@ -158,23 +155,30 @@ public class InvoiceTest {
 
     private void setUpInvoiceData() {
         ResourceItem resourceItem1 = Mockito.mock(ResourceItem.class);
-        Mockito.when(resourceItem1.toString()).thenReturn(RESOURCE_ITEM_1_STRING);
+        Mockito.when(resourceItem1.repr()).thenReturn(RESOURCE_ITEM_1_STRING);
         ResourceItem resourceItem2 = Mockito.mock(ResourceItem.class);
-        Mockito.when(resourceItem2.toString()).thenReturn(RESOURCE_ITEM_2_STRING);
+        Mockito.when(resourceItem2.repr()).thenReturn(RESOURCE_ITEM_2_STRING);
+        
+        InvoiceItem invoiceItem1 = Mockito.mock(InvoiceItem.class);
+        Mockito.when(invoiceItem1.getOrderId()).thenReturn(ORDER_ID_1);
+        Mockito.when(invoiceItem1.getOrderState()).thenReturn(STATE_1);
+        Mockito.when(invoiceItem1.getItem()).thenReturn(resourceItem1);
+        Mockito.when(invoiceItem1.getValue()).thenReturn(RESOURCE_ITEM_1_VALUE);
+        
+        InvoiceItem invoiceItem2 = Mockito.mock(InvoiceItem.class);
+        Mockito.when(invoiceItem2.getOrderId()).thenReturn(ORDER_ID_2);
+        Mockito.when(invoiceItem2.getOrderState()).thenReturn(STATE_2);
+        Mockito.when(invoiceItem2.getItem()).thenReturn(resourceItem2);
+        Mockito.when(invoiceItem2.getValue()).thenReturn(RESOURCE_ITEM_2_VALUE);
         
         // This code assures a certain order of resource items is used in the string generation
-        Iterator<Pair<ResourceItem, OrderState>> iterator = 
-        		new TestUtils().getIterator(Arrays.asList(
-        				Pair.of(resourceItem1, STATE_1),
-        				Pair.of(resourceItem2, STATE_2)));
+        Iterator<InvoiceItem> iterator = new TestUtils().getIterator(
+                Arrays.asList(invoiceItem1, invoiceItem2));
         
-        itemsSet = Mockito.mock(HashSet.class);
-        Mockito.when(itemsSet.iterator()).thenReturn(iterator);
-        
-        invoiceItems = Mockito.mock(HashMap.class);
-        Mockito.when(invoiceItems.keySet()).thenReturn(itemsSet);
-        Mockito.when(invoiceItems.get(Pair.of(resourceItem1, STATE_1))).thenReturn(RESOURCE_ITEM_1_VALUE);
-        Mockito.when(invoiceItems.get(Pair.of(resourceItem2, STATE_2))).thenReturn(RESOURCE_ITEM_2_VALUE);
+        invoiceItems = Mockito.mock(ArrayList.class);
+        Mockito.when(invoiceItems.iterator()).thenReturn(iterator);
+        Mockito.when(invoiceItems.get(0)).thenReturn(invoiceItem1);
+        Mockito.when(invoiceItems.get(1)).thenReturn(invoiceItem2);
 
         invoiceTotal = RESOURCE_ITEM_1_VALUE + RESOURCE_ITEM_2_VALUE;
     }

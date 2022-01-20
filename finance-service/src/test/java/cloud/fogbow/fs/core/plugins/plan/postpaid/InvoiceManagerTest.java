@@ -52,6 +52,8 @@ public class InvoiceManagerTest {
     private static final TimeUnit ITEM_1_TIME_UNIT_2 = TimeUnit.SECONDS;
     private static final TimeUnit ITEM_2_TIME_UNIT_1 = TimeUnit.MINUTES;
     private static final TimeUnit ITEM_2_TIME_UNIT_2 = TimeUnit.HOURS;
+    private static final String ORDER_ID_1 = "orderId1";
+    private static final String ORDER_ID_2 = "orderId2";
     private Long invoiceStartTime = 0L;
     private Long invoiceEndTime = 50L;
     private InMemoryUsersHolder objectHolder;
@@ -87,10 +89,10 @@ public class InvoiceManagerTest {
         
         Mockito.verify(this.invoiceBuilder).setUserId(USER_ID_1);
         Mockito.verify(this.invoiceBuilder).setProviderId(PROVIDER_ID_1);
-        Mockito.verify(this.invoiceBuilder).addItem(item1, state1, ITEM_1_VALUE, new Double(ITEM_1_TIME_ON_STATE_1));
-        Mockito.verify(this.invoiceBuilder).addItem(item2, state1, ITEM_2_VALUE, new Double(ITEM_2_TIME_ON_STATE_1));
-        Mockito.verify(this.invoiceBuilder).addItem(item2, state2, ITEM_2_VALUE, new Double(ITEM_2_TIME_ON_STATE_2));
-        Mockito.verify(this.invoiceBuilder).addItem(item1, state2, ITEM_1_VALUE, new Double(ITEM_1_TIME_ON_STATE_2));
+        Mockito.verify(this.invoiceBuilder).addItem(ORDER_ID_1, item1, state1, ITEM_1_VALUE, new Double(ITEM_1_TIME_ON_STATE_1));
+        Mockito.verify(this.invoiceBuilder).addItem(ORDER_ID_2, item2, state1, ITEM_2_VALUE, new Double(ITEM_2_TIME_ON_STATE_1));
+        Mockito.verify(this.invoiceBuilder).addItem(ORDER_ID_2, item2, state2, ITEM_2_VALUE, new Double(ITEM_2_TIME_ON_STATE_2));
+        Mockito.verify(this.invoiceBuilder).addItem(ORDER_ID_1, item1, state2, ITEM_1_VALUE, new Double(ITEM_1_TIME_ON_STATE_2));
         Mockito.verify(this.invoiceBuilder).setStartTime(invoiceStartTime);
         Mockito.verify(this.invoiceBuilder).setEndTime(invoiceEndTime);
         Mockito.verify(this.objectHolder).getUserById(USER_ID_1, PROVIDER_ID_1);
@@ -145,10 +147,10 @@ public class InvoiceManagerTest {
         
         Mockito.verify(this.invoiceBuilder).setUserId(USER_ID_1);
         Mockito.verify(this.invoiceBuilder).setProviderId(PROVIDER_ID_1);
-        Mockito.verify(this.invoiceBuilder).addItem(item1, state1, ITEM_1_VALUE, new Double(ITEM_1_TIME_ON_STATE_1));
-        Mockito.verify(this.invoiceBuilder).addItem(item1, state2, ITEM_1_VALUE, new Double(ITEM_1_TIME_ON_STATE_2));
-        Mockito.verify(this.invoiceBuilder).addItem(item2, state1, ITEM_2_VALUE, new Double(ITEM_2_TIME_ON_STATE_1));
-        Mockito.verify(this.invoiceBuilder).addItem(item2, state2, ITEM_2_VALUE, new Double(ITEM_2_TIME_ON_STATE_2));
+        Mockito.verify(this.invoiceBuilder).addItem(ORDER_ID_1, item1, state1, ITEM_1_VALUE, new Double(ITEM_1_TIME_ON_STATE_1));
+        Mockito.verify(this.invoiceBuilder).addItem(ORDER_ID_1, item1, state2, ITEM_1_VALUE, new Double(ITEM_1_TIME_ON_STATE_2));
+        Mockito.verify(this.invoiceBuilder).addItem(ORDER_ID_2, item2, state1, ITEM_2_VALUE, new Double(ITEM_2_TIME_ON_STATE_1));
+        Mockito.verify(this.invoiceBuilder).addItem(ORDER_ID_2, item2, state2, ITEM_2_VALUE, new Double(ITEM_2_TIME_ON_STATE_2));
         Mockito.verify(this.invoiceBuilder).setStartTime(invoiceStartTime);
         Mockito.verify(this.invoiceBuilder).setEndTime(invoiceEndTime);
         Mockito.verify(this.objectHolder).getUserById(USER_ID_1, PROVIDER_ID_1);
@@ -311,7 +313,10 @@ public class InvoiceManagerTest {
 
     private void setUpDataStructures() throws InvalidParameterException {
         this.record1 = Mockito.mock(Record.class);
+        Mockito.when(this.record1.getOrderId()).thenReturn(ORDER_ID_1);
+        
         this.record2 = Mockito.mock(Record.class);
+        Mockito.when(this.record2.getOrderId()).thenReturn(ORDER_ID_2);
 
         this.records = new ArrayList<Record>();
         this.records.add(record1);

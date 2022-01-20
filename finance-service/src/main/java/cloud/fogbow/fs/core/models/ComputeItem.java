@@ -83,4 +83,9 @@ public class ComputeItem extends ResourceItem {
 	public String toString() {
 		return "{\"type\":\"compute\", \"vCPU\":" + vCPU + ", \"ram\":" + ram + "}";
 	}
+
+    @Override
+    String repr() {
+        return String.format("compute-vcpu:%d-mem:%d", this.vCPU, this.ram);
+    }
 }

@@ -129,7 +129,7 @@ public class InvoiceManager {
                 periodLowerLimit = periodHigherLimit;
                 periodHigherLimit = timestampsIterator.next();
                 OrderState periodState = stateHistory.get(periodLowerLimit);
-                processPeriod(periodLowerLimit, periodHigherLimit, periodState, resourceItem);
+                processPeriod(record.getOrderId(), periodLowerLimit, periodHigherLimit, periodState, resourceItem);
             } while (timestampsIterator.hasNext());
 
         } catch (InvalidParameterException e) {
@@ -137,14 +137,14 @@ public class InvoiceManager {
         }
     }
     
-    private void processPeriod(Timestamp periodLowerLimit, Timestamp periodHigherLimit, 
+    private void processPeriod(String orderId, Timestamp periodLowerLimit, Timestamp periodHigherLimit, 
             OrderState periodState, ResourceItem resourceItem) throws InvalidParameterException {
         Long realTimeSpentOnState = periodHigherLimit.getTime() - periodLowerLimit.getTime();
         Double roundUpTimeSpentOnState = getRoundUpTimeSpentOnState(resourceItem, periodState, realTimeSpentOnState);
         
         Double financialValue = policy.getItemFinancialValue(resourceItem, periodState);
         
-        invoiceBuilder.addItem(resourceItem, periodState, financialValue, roundUpTimeSpentOnState);
+        invoiceBuilder.addItem(orderId, resourceItem, periodState, financialValue, roundUpTimeSpentOnState);
     }
     
     private Double getRoundUpTimeSpentOnState(ResourceItem resourceItem, OrderState state, Long realTimeSpentOnState) throws InvalidParameterException {
