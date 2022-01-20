@@ -131,15 +131,15 @@ public class RecordService {
 
     protected List<Record> getRecordsByState(AccountingUser user, String requestingMember,
             Timestamp startTime, Timestamp endTime, OrderState state) {
-        return recordRepository.findByUserAndRequestingMemberAndStartDateLessThanEqualAndStartDateGreaterThanEqualAndStateEquals(
-                user, requestingMember, endTime, startTime, state
+        return recordRepository.findByUserAndRequestingMemberAndStartDateLessThanEqualAndStateEquals(
+                user, requestingMember, endTime, state
         );
     }
     
     protected List<Record> getRecordsByState(AccountingUser user, String requestingMember, String resourceType,
             Timestamp startTime, Timestamp endTime, OrderState state) {
-        return recordRepository.findByUserAndRequestingMemberAndResourceTypeAndStartDateLessThanEqualAndStartDateGreaterThanEqualAndStateEquals(
-                user, requestingMember, resourceType, endTime, startTime, state
+        return recordRepository.findByUserAndRequestingMemberAndResourceTypeAndStartDateLessThanEqualAndStateEquals(
+                user, requestingMember, resourceType, endTime, state
         );
     }
     

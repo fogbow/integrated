@@ -171,15 +171,15 @@ public class RecordServiceTest extends BaseUnitTests {
     
     private void mockDatabaseResponse(AccountingUser user, Timestamp startTime, Timestamp endTime, OrderState state) {
         Mockito.doReturn(testUtils.createRecordsWithState(DEFAULT_RECORDS_SIZE, state)).when(recordRepository).
-        findByUserAndRequestingMemberAndStartDateLessThanEqualAndStartDateGreaterThanEqualAndStateEquals(
-                user, FAKE_REQ_MEMBER, startTime,
+        findByUserAndRequestingMemberAndStartDateLessThanEqualAndStateEquals(
+                user, FAKE_REQ_MEMBER,
                 endTime, state);
     }
     
     private void mockDatabaseResponseOfResourceType(AccountingUser user, Timestamp startTime, Timestamp endTime, OrderState state) {
         Mockito.doReturn(testUtils.createRecordsWithState(DEFAULT_RECORDS_SIZE, state)).when(recordRepository).
-        findByUserAndRequestingMemberAndResourceTypeAndStartDateLessThanEqualAndStartDateGreaterThanEqualAndStateEquals(
-                user, FAKE_REQ_MEMBER, DEFAULT_RESOURCE_TYPE, startTime,
+        findByUserAndRequestingMemberAndResourceTypeAndStartDateLessThanEqualAndStateEquals(
+                user, FAKE_REQ_MEMBER, DEFAULT_RESOURCE_TYPE,
                 endTime, state);
     }
 
@@ -292,9 +292,9 @@ public class RecordServiceTest extends BaseUnitTests {
             case STOPPING:
             case STOPPED:
             case SPAWNING:
-                Mockito.doReturn(testUtils.createRecordsWithState(size, state)).when(recordRepository).findByUserAndRequestingMemberAndResourceTypeAndStartDateLessThanEqualAndStartDateGreaterThanEqualAndStateEquals(
+                Mockito.doReturn(testUtils.createRecordsWithState(size, state)).when(recordRepository).findByUserAndRequestingMemberAndResourceTypeAndStartDateLessThanEqualAndStateEquals(
                         Mockito.any(AccountingUser.class), Mockito.anyString(), Mockito.anyString(), Mockito.any(Timestamp.class),
-                        Mockito.any(Timestamp.class), Mockito.any(OrderState.class));
+                        Mockito.any(OrderState.class));
             break;
         }
     }
