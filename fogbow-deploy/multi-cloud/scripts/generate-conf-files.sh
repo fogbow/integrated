@@ -433,7 +433,7 @@ if [ "$FS_DEFAULT_PLAN_PLUGIN_TYPE" == "cloud.fogbow.fs.core.plugins.plan.postpa
 	echo "billing_interval=$FS_BILLING_INTERVAL" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 	echo "invoice_wait_time=$FS_INVOICE_WAIT_TIME" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 else
-	echo "credits_deduction_wait_time$FS_CREDITS_DEDUCTION_WAIT_TIME" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
+	echo "credits_deduction_wait_time=$FS_CREDITS_DEDUCTION_WAIT_TIME" >> $FS_DIR_PATH/$FS_CONF_FILE_NAME
 fi
 
 ## Copying application.properties file
