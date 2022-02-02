@@ -185,6 +185,7 @@ public class Messages {
         public static final String ERROR_WHILE_STOPPING_INSTANCE_S = "Error while stopping instance %s.";
         public static final String ERROR_WHILE_UPDATING_NETWORK_S = "Error while updating a network from template: %s.";
         public static final String ERROR_WHILE_UPDATING_SECURITY_GROUPS_S = "Error while updating a security groups from template: %s.";
+        public static final String FAILED_TO_CHECK_ORDER_S_STATE = "Failed to check order %s state.";
         public static final String FIRST_STEP_CREATE_PUBLIC_IP_ASYNC_BEHAVIOUR = "First step: Public IP Address created and associated with the virtual machine.";
         public static final String FIRST_STEP_CREATE_VNET_ASYNC_BEHAVIOUR = "First step on virtual network creation: Security group created.";
         public static final String FIRST_STEP_DETACH_PUBLIC_IP_ASYNC_BEHAVIOUR = "First step: Public IP Address disassociated from network interface.";

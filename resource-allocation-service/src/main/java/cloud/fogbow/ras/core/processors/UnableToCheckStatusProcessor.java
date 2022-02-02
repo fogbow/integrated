@@ -1,6 +1,7 @@
 package cloud.fogbow.ras.core.processors;
 
 import cloud.fogbow.common.exceptions.FogbowException;
+import cloud.fogbow.common.exceptions.UnauthenticatedUserException;
 import cloud.fogbow.ras.api.http.response.OrderInstance;
 import cloud.fogbow.ras.constants.Messages;
 import cloud.fogbow.ras.core.OrderStateTransitioner;
@@ -64,9 +65,14 @@ public class UnableToCheckStatusProcessor extends StoppableOrderListProcessor im
                 } else if (instance.hasFailed()) {
                     OrderStateTransitioner.transition(order, OrderState.FAILED_AFTER_SUCCESSFUL_REQUEST);
                 }
-            } catch (Exception e) {
-                order.setOnceFaultMessage(e.getMessage());
-                LOGGER.info(String.format(Messages.Exception.GENERIC_EXCEPTION_S, e));
+                // The UnauthenticatedUserException catch is used in the case of
+                // authentication errors when acquiring the order state.
+            } catch (UnauthenticatedUserException e1) {
+                LOGGER.error(String.format(Messages.Log.FAILED_TO_CHECK_ORDER_S_STATE, order.getId()));
+                throw e1;
+            } catch (Exception e2) {
+                order.setOnceFaultMessage(e2.getMessage());
+                LOGGER.info(String.format(Messages.Exception.GENERIC_EXCEPTION_S, e2));
                 OrderStateTransitioner.transition(order, OrderState.FAILED_AFTER_SUCCESSFUL_REQUEST);
             }
         }

@@ -1,6 +1,7 @@
 package cloud.fogbow.ras.core.processors;
 
 import cloud.fogbow.common.exceptions.FogbowException;
+import cloud.fogbow.common.exceptions.UnauthenticatedUserException;
 import cloud.fogbow.common.exceptions.UnavailableProviderException;
 import cloud.fogbow.ras.api.http.response.OrderInstance;
 import cloud.fogbow.ras.constants.Messages;
@@ -64,7 +65,10 @@ public class FulfilledProcessor extends StoppableOrderListProcessor implements R
                     LOGGER.info(String.format(Messages.Log.INSTANCE_S_HAS_FAILED, order.getId()));
                     OrderStateTransitioner.transition(order, OrderState.FAILED_AFTER_SUCCESSFUL_REQUEST);
                 }
-            } catch (UnavailableProviderException e1) {
+                // The UnauthenticatedUserException catch is used in the case of
+                // authentication errors when acquiring the order state. 
+            } catch (UnavailableProviderException | UnauthenticatedUserException e1) {
+                LOGGER.error(String.format(Messages.Log.FAILED_TO_CHECK_ORDER_S_STATE, order.getId()));
                 OrderStateTransitioner.transition(order, OrderState.UNABLE_TO_CHECK_STATUS);
                 throw e1;
             } catch (Exception e2) {
