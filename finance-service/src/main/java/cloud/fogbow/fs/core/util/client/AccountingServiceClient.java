@@ -160,7 +160,9 @@ public class AccountingServiceClient {
         }
         
         if (response.getHttpCode() > HttpStatus.SC_OK) {
-            Throwable e = new HttpResponseException(response.getHttpCode(), response.getContent());
+            String errorMessage = String.format(Messages.Exception.COULD_NOT_ACQUIRE_USER_RECORDS, 
+                    response.getHttpCode(), response.getContent());
+            Throwable e = new HttpResponseException(response.getHttpCode(), errorMessage);
             throw new UnavailableProviderException(e.getMessage());
         }
         
