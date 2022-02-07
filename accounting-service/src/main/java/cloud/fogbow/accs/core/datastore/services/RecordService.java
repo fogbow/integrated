@@ -26,7 +26,7 @@ public class RecordService {
     private static final List<OrderState> OPENED_RECORDS_STATES = Arrays.asList(OrderState.FULFILLED, 
             OrderState.PAUSING, OrderState.PAUSED, 
             OrderState.HIBERNATING, OrderState.HIBERNATED, OrderState.STOPPING, 
-            OrderState.STOPPED, OrderState.SPAWNING);
+            OrderState.STOPPED);
     
     @Autowired
     private RecordRepository recordRepository;

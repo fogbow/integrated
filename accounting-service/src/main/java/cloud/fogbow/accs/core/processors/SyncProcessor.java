@@ -168,7 +168,7 @@ public class SyncProcessor implements Runnable {
 			Date d = f.parse(f.format((Date) timestamp));
 			return new Timestamp(d.getTime());
 		} catch (ParseException pe) {
-			pe.printStackTrace();
+		    LOGGER.error(Messages.Exception.CANNOT_EXTRACT_DATE_FROM_TIMESTAMP);
 		}
 		return null;
 	}

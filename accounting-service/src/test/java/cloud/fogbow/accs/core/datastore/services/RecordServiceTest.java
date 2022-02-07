@@ -118,14 +118,13 @@ public class RecordServiceTest extends BaseUnitTests {
         mockDatabaseResponseOfResourceType(accountingUser, startTime, endTime, OrderState.HIBERNATED);
         mockDatabaseResponseOfResourceType(accountingUser, startTime, endTime, OrderState.STOPPING);
         mockDatabaseResponseOfResourceType(accountingUser, startTime, endTime, OrderState.STOPPED);
-        mockDatabaseResponseOfResourceType(accountingUser, startTime, endTime, OrderState.SPAWNING);
         
         //exercise
         List<Record> records = recordService.getOpenedRecords(accountingUser, FAKE_REQ_MEMBER, DEFAULT_RESOURCE_TYPE,
                 startTime, endTime);
 
         //verify
-        Assert.assertEquals(16, records.size());
+        Assert.assertEquals(14, records.size());
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.FULFILLED)).collect(Collectors.toList()).size());
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.PAUSING)).collect(Collectors.toList()).size());
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.PAUSED)).collect(Collectors.toList()).size());
@@ -133,7 +132,6 @@ public class RecordServiceTest extends BaseUnitTests {
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.HIBERNATED)).collect(Collectors.toList()).size());
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.STOPPING)).collect(Collectors.toList()).size());
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.STOPPED)).collect(Collectors.toList()).size());
-        Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.SPAWNING)).collect(Collectors.toList()).size());
     }
     
     //test case: just exercise the method by checking if it returned what it should return
@@ -152,13 +150,12 @@ public class RecordServiceTest extends BaseUnitTests {
         mockDatabaseResponse(accountingUser, startTime, endTime, OrderState.HIBERNATED);
         mockDatabaseResponse(accountingUser, startTime, endTime, OrderState.STOPPING);
         mockDatabaseResponse(accountingUser, startTime, endTime, OrderState.STOPPED);
-        mockDatabaseResponse(accountingUser, startTime, endTime, OrderState.SPAWNING);
         
         //exercise
         List<Record> records = recordService.getOpenedRecords(accountingUser, FAKE_REQ_MEMBER, startTime, endTime);
 
         //verify
-        Assert.assertEquals(16, records.size());
+        Assert.assertEquals(14, records.size());
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.FULFILLED)).collect(Collectors.toList()).size());
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.PAUSING)).collect(Collectors.toList()).size());
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.PAUSED)).collect(Collectors.toList()).size());
@@ -166,7 +163,6 @@ public class RecordServiceTest extends BaseUnitTests {
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.HIBERNATED)).collect(Collectors.toList()).size());
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.STOPPING)).collect(Collectors.toList()).size());
         Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.STOPPED)).collect(Collectors.toList()).size());
-        Assert.assertEquals(2, records.stream().filter(rec -> rec.getState().equals(OrderState.SPAWNING)).collect(Collectors.toList()).size());
     }
     
     private void mockDatabaseResponse(AccountingUser user, Timestamp startTime, Timestamp endTime, OrderState state) {

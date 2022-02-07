@@ -15,6 +15,7 @@ public class Messages {
         public static final String GENERIC_EXCEPTION = "Operation returned error: %s.";
 		public static final String INVALID_RECORD_TYPE = "Invalid record type: %s.";
 		public static final String INVALID_RECORD_PROPERTY = "Invalid record property: %s.";
+        public static final String CANNOT_EXTRACT_DATE_FROM_TIMESTAMP = "Cannot extract date from timestamp.";
     }
 
 	public static class Info {
