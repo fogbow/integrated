@@ -91,6 +91,7 @@ public class OpenStackConstants {
         public static final String SHELVE_KEY_JSON = "shelve";
         public static final String UNSHELVE_KEY_JSON = "unshelve";
         public static final String CREATE_IMAGE_KEY_JSON = "createImage";
+        public static final String TASK_STATE_JSON = "OS-EXT-STS:task_state";
     }
 
     public static class Network {
