@@ -485,13 +485,21 @@ public class LocalCloudConnector implements CloudConnector {
     OrderInstance checkInstanceSpecificStatus(OrderInstance instance, ResourceType resourceType) throws FogbowException {
         switch (resourceType) {
             case COMPUTE:
+                boolean isPausing = this.computePlugin.isPausing(instance.getCloudState());
                 boolean isPaused = this.computePlugin.isPaused(instance.getCloudState());
+                boolean isHibernating = this.computePlugin.isHibernating(instance.getCloudState());
                 boolean isHibernated = this.computePlugin.isHibernated(instance.getCloudState());
+                boolean isStopping = this.computePlugin.isStopping(instance.getCloudState());
                 boolean isStopped = this.computePlugin.isStopped(instance.getCloudState());
+                boolean isResuming = this.computePlugin.isResuming(instance.getCloudState());
                 ComputeInstance computeInstance = (ComputeInstance) instance;
+                if (isPausing) computeInstance.setPausing();
                 if (isPaused) computeInstance.setPaused();
                 if (isHibernated) computeInstance.setHibernated();
+                if (isHibernating) computeInstance.setHibernating();
+                if (isStopping) computeInstance.setStopping();
                 if (isStopped) computeInstance.setStopped();
+                if (isResuming) computeInstance.setResuming();
                 return computeInstance;
             default:
                 return instance;

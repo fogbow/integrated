@@ -148,6 +148,11 @@ public class EmulatedCloudComputePlugin implements ComputePlugin<CloudUser> {
             throw new InstanceNotFoundException(Messages.Exception.INSTANCE_NOT_FOUND);
         }
     }
+
+    @Override
+    public boolean isPausing(String cloudState) throws FogbowException {
+        return false;
+    }
     
     @Override
     public boolean isPaused(String cloudState) throws FogbowException {
@@ -155,13 +160,28 @@ public class EmulatedCloudComputePlugin implements ComputePlugin<CloudUser> {
     }
 
     @Override
+    public boolean isHibernating(String cloudState) throws FogbowException {
+        return EmulatedCloudStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.HIBERNATING);
+    }
+    
+    @Override
     public boolean isHibernated(String cloudState) throws FogbowException {
         return EmulatedCloudStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.HIBERNATED);
     }
 
     @Override
+    public boolean isStopping(String cloudState) throws FogbowException {
+        return EmulatedCloudStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.STOPPING);
+    }
+    
+    @Override
     public boolean isStopped(String cloudState) throws FogbowException {
         return EmulatedCloudStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.STOPPED);
+    }
+
+    @Override
+    public boolean isResuming(String cloudState) throws FogbowException {
+        return EmulatedCloudStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.RESUMING);
     }
     
     private EmulatedCompute createCompute(ComputeOrder computeOrder) {

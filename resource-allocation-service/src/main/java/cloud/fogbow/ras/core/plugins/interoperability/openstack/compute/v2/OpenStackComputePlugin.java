@@ -30,6 +30,13 @@ import java.util.*;
 
 public class OpenStackComputePlugin implements ComputePlugin<OpenStackV3User> {
     private static final Logger LOGGER = Logger.getLogger(OpenStackComputePlugin.class);
+    public static final List<String> OPERATION_IN_PROGRESS_STATES = Arrays.asList(
+            OpenStackStateMapper.SUSPENDING_STATUS, OpenStackStateMapper.PAUSING_STATUS, 
+            OpenStackStateMapper.SHELVING_IMAGE_PENDING_UPLOAD, 
+            OpenStackStateMapper.SHELVING_IMAGE_UPLOADING_STATUS, 
+            OpenStackStateMapper.SHELVING_STATUS, OpenStackStateMapper.SHELVING_OFFLOADING_STATUS, 
+            OpenStackStateMapper.UNSHELVING_STATUS, OpenStackStateMapper.SPAWNING_STATUS, 
+            OpenStackStateMapper.RESUMING_STATUS);
 
     private TreeSet<HardwareRequirements> hardwareRequirementsList;
     private Properties properties;
@@ -53,18 +60,38 @@ public class OpenStackComputePlugin implements ComputePlugin<OpenStackV3User> {
     }
 
     @Override
+    public boolean isPausing(String cloudState) throws FogbowException {
+        return OpenStackStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.PAUSING);
+    }
+    
+    @Override
     public boolean isPaused(String cloudState) throws FogbowException {
         return OpenStackStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.PAUSED);
     }
 
+    @Override
+    public boolean isHibernating(String cloudState) throws FogbowException {
+        return OpenStackStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.HIBERNATING);
+    }
+    
     @Override
     public boolean isHibernated(String cloudState) throws FogbowException {
         return OpenStackStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.HIBERNATED);
     }
     
     @Override
+    public boolean isStopping(String cloudState) throws FogbowException {
+        return OpenStackStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.STOPPING);
+    }
+    
+    @Override
     public boolean isStopped(String cloudState) throws FogbowException {
         return OpenStackStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.STOPPED);
+    }
+    
+    @Override
+    public boolean isResuming(String cloudState) throws FogbowException {
+        return OpenStackStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.RESUMING);
     }
 
     @Override
@@ -175,19 +202,24 @@ public class OpenStackComputePlugin implements ComputePlugin<OpenStackV3User> {
                 + OpenStackConstants.ENDPOINT_SEPARATOR + computeOrder.getInstanceId()
                 + OpenStackConstants.ENDPOINT_SEPARATOR + OpenStackConstants.ACTION);
 
-        if(computeOrder.getOrderState().equals(OrderState.PAUSED)) {
+        ComputeInstance instance = getInstance(computeOrder, cloudUser);
+
+        if (isPaused(instance.getCloudState())) {
             UnpauseComputeRequest request = getUnpauseComputeRequest();
             String body = request.toJson();
             this.doPostRequest(endpoint, body, cloudUser);
 
-        } else if(computeOrder.getOrderState().equals(OrderState.HIBERNATED)) {
+        } else if (isHibernated(instance.getCloudState())) {
             ResumeComputeRequest request = getResumeComputeRequest();
             String body = request.toJson();
             this.doPostRequest(endpoint, body, cloudUser);
-        } else if (computeOrder.getOrderState().equals(OrderState.STOPPED)) {
+        } else if (isStopped(instance.getCloudState())) {
             UnshelveComputeRequest request = getUnshelveComputeRequest();
             String body = request.toJson();
             this.doPostRequest(endpoint, body, cloudUser);
+        } else {
+            throw new InternalServerErrorException(
+                    Messages.Exception.CANNOT_RESUME_INSTANCE_DUE_TO_INSTANCE_STATE);
         }
     }
 
@@ -519,6 +551,15 @@ public class OpenStackComputePlugin implements ComputePlugin<OpenStackV3User> {
         GetComputeResponse getComputeResponse = GetComputeResponse.fromJson(getRawResponse);
 
         String openStackState = getComputeResponse.getStatus();
+        String openStackTaskState = getComputeResponse.getTaskState();
+        
+        // if openStackTaskState is not null and related to PAUSING, HIBERNATING, STOPPING or
+        // RESUMING states, we use openStackTaskState as the instance state.
+        if (openStackTaskState != null && 
+                OpenStackComputePlugin.OPERATION_IN_PROGRESS_STATES.contains(openStackTaskState)) {
+            openStackState = openStackTaskState;
+        }
+        
         String instanceId = getComputeResponse.getId();
         String hostName = getComputeResponse.getName();
         String faultMessage = getComputeResponse.getFaultMessage();

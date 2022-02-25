@@ -276,6 +276,20 @@ public class AwsComputePluginTest extends BaseUnitTests {
         Assert.assertFalse(status);
     }
     
+    // test case: Whenever you call the isPausing method, no matter the value, it
+    // must return false.
+    @Test
+    public void testIsPausing() throws FogbowException {
+        // set up
+        String cloudState = ANY_VALUE;
+
+        // exercise
+        boolean status = this.plugin.isPausing(cloudState);
+
+        // verify
+        Assert.assertFalse(status);
+    }
+    
     // test case: Whenever you call the isPaused method, no matter the value, it
     // must return false.
     @Test
@@ -288,6 +302,39 @@ public class AwsComputePluginTest extends BaseUnitTests {
 
         // verify
         Assert.assertFalse(status);
+    }
+
+    // test case: When calling the isHibernating method with the cloud state STOPPING,
+    // this means that the state of compute is either HIBERNATING or STOPPING and 
+    // it must return true.
+    @Test
+    public void testIsHibernating() throws FogbowException {
+        // set up
+        String cloudState = AwsV2StateMapper.STOPPING_STATE;
+
+        // exercise
+        boolean status = this.plugin.isHibernating(cloudState);
+
+        // verify
+        Assert.assertTrue(status);
+    }
+    
+    // test case: When calling the isHibernating method with the cloud states different
+    // than STOPPING, this means that the state of compute is not HIBERNATING and it must
+    // return false.
+    @Test
+    public void testIsNotHibernating() throws FogbowException {
+        // set up
+        String[] cloudStates = { ANY_VALUE, AwsV2StateMapper.PENDING_STATE, AwsV2StateMapper.SHUTTING_DOWN_STATE,
+                AwsV2StateMapper.STOPPED_STATE, AwsV2StateMapper.RUNNING_STATE };
+
+        for (String cloudState : cloudStates) {
+            // exercise
+            boolean status = this.plugin.isHibernating(cloudState);
+
+            // verify
+            Assert.assertFalse(status);
+        }
     }
     
     // test case: When calling the isHibernated method with the cloud state STOPPED,
@@ -323,6 +370,39 @@ public class AwsComputePluginTest extends BaseUnitTests {
         }
     }
     
+    // test case: When calling the isStopping method with the cloud state STOPPING,
+    // this means that the state of compute is either HIBERNATING or STOPPING and 
+    // it must return true.
+    @Test
+    public void testIsStopping() throws FogbowException {
+        // set up
+        String cloudState = AwsV2StateMapper.STOPPING_STATE;
+
+        // exercise
+        boolean status = this.plugin.isStopping(cloudState);
+
+        // verify
+        Assert.assertTrue(status);
+    }
+    
+    // test case: When calling the isStopping method with the cloud states different
+    // than STOPPING, this means that the state of compute is not STOPPING and it must
+    // return false.
+    @Test
+    public void testIsNotStopping() throws FogbowException {
+        // set up
+        String[] cloudStates = { ANY_VALUE, AwsV2StateMapper.PENDING_STATE, AwsV2StateMapper.SHUTTING_DOWN_STATE,
+                AwsV2StateMapper.STOPPED_STATE, AwsV2StateMapper.RUNNING_STATE };
+
+        for (String cloudState : cloudStates) {
+            // exercise
+            boolean status = this.plugin.isStopping(cloudState);
+
+            // verify
+            Assert.assertFalse(status);
+        }
+    }
+    
     // test case: When calling the isStopped method with the cloud state STOPPED,
     // this means that the state of compute is either HIBERNATED or STOPPED and 
     // it must return true.
@@ -350,6 +430,38 @@ public class AwsComputePluginTest extends BaseUnitTests {
         for (String cloudState : cloudStates) {
             // exercise
             boolean status = this.plugin.isStopped(cloudState);
+
+            // verify
+            Assert.assertFalse(status);
+        }
+    }
+    
+    // test case: When calling the isResuming method with the cloud state PENDING,
+    // this means that the state of compute is RESUMING and it must return true.
+    @Test
+    public void testIsResuming() throws FogbowException {
+        // set up
+        String cloudState = AwsV2StateMapper.PENDING_STATE;
+
+        // exercise
+        boolean status = this.plugin.isResuming(cloudState);
+
+        // verify
+        Assert.assertTrue(status);
+    }
+    
+    // test case: When calling the isResuming method with the cloud states different
+    // than PENDING, this means that the state of compute is not RESUMING and it must
+    // return false.
+    @Test
+    public void testIsNotResuming() throws FogbowException {
+        // set up
+        String[] cloudStates = { ANY_VALUE, AwsV2StateMapper.SHUTTING_DOWN_STATE,
+                AwsV2StateMapper.STOPPING_STATE, AwsV2StateMapper.RUNNING_STATE };
+
+        for (String cloudState : cloudStates) {
+            // exercise
+            boolean status = this.plugin.isResuming(cloudState);
 
             // verify
             Assert.assertFalse(status);

@@ -105,6 +105,35 @@ public class StoppingProcessorTest extends BaseUnitTests {
         Assert.assertNull(this.stoppingOrderList.getNext());
         Assert.assertEquals(OrderState.STOPPED, order.getOrderState());
     }
+    
+    // test case: When calling the processStopOrder method
+    // with local Order and the order instance is neither stopped or 
+    // stopping, it must verify if it tries to stop the order again.
+    // The order list must remain unchanged.
+    @Test
+    public void testProcessStopOrderTriesToStopAgainIfNotSuccessful()
+            throws Exception {
+        // set up
+        Order order = this.testUtils.createLocalOrder(this.testUtils.getLocalMemberId());
+        this.orderController.activateOrder(order);
+        OrderStateTransitioner.transition(order, OrderState.STOPPING);
+
+        LocalCloudConnector localCloudConnector = this.testUtils.mockLocalCloudConnectorFromFactory();
+
+        
+        ComputeInstance orderInstance = Mockito.mock(ComputeInstance.class);
+        Mockito.when(orderInstance.isStopped()).thenReturn(false);
+        Mockito.when(orderInstance.isStopping()).thenReturn(false);
+        
+        Mockito.when(localCloudConnector.getInstance(Mockito.eq(order))).thenReturn(orderInstance);
+
+        // exercise
+        this.processor.processStopOrder(order);
+
+        // verify
+        Assert.assertEquals(order, this.stoppingOrderList.getNext());
+        Mockito.verify(localCloudConnector).stopComputeInstance(order);
+    }
 
     // test case: When calling the processStopOrder method
     // with local Order and throws a generic exception,

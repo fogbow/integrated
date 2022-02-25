@@ -69,6 +69,9 @@ public class ResumingProcessor extends StoppableOrderListProcessor implements Ru
 
                 if (instance.isReady()) {
                     OrderStateTransitioner.transition(order, OrderState.FULFILLED);
+                } else if (!instance.isResuming()) {
+                    LOGGER.debug(Messages.Exception.RESUME_FAILED);
+                    localCloudConnector.resumeComputeInstance(order);
                 }
             } catch (InstanceNotFoundException e) {
                 OrderStateTransitioner.transition(order, OrderState.FAILED_AFTER_SUCCESSFUL_REQUEST);

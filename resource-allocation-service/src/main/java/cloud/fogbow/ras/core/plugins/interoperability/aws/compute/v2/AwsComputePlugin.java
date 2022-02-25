@@ -165,13 +165,28 @@ public class AwsComputePlugin implements ComputePlugin<AwsV2User> {
     }
 
     @Override
+    public boolean isPausing(String cloudState) throws FogbowException {
+        return false;
+    }
+    
+    @Override
     public boolean isPaused(String cloudState) throws FogbowException {
         return false;
     }
 
     @Override
+    public boolean isHibernating(String cloudState) throws FogbowException {
+        return AwsV2StateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.STOPPING);
+    }
+    
+    @Override
     public boolean isHibernated(String cloudState) throws FogbowException {
         return AwsV2StateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.STOPPED);
+    }
+    
+    @Override
+    public boolean isStopping(String cloudState) throws FogbowException {
+        return AwsV2StateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.STOPPING);
     }
     
     @Override
@@ -182,6 +197,11 @@ public class AwsComputePlugin implements ComputePlugin<AwsV2User> {
     @Override
     public boolean isReady(String instanceState) {
         return AwsV2StateMapper.map(ResourceType.COMPUTE, instanceState).equals(InstanceState.READY);
+    }
+    
+    @Override
+    public boolean isResuming(String cloudState) throws FogbowException {
+        return AwsV2StateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.CREATING);
     }
 
     @Override

@@ -70,18 +70,38 @@ public class AzureComputePlugin implements ComputePlugin<AzureUser>, AzureAsync<
     }
     
     @Override
+    public boolean isPausing(String cloudState) throws FogbowException {
+        return false;
+    }
+    
+    @Override
     public boolean isPaused(String cloudState) {
         return false;
     }
 
     @Override
-    public boolean isHibernated(String cloudState) {
+    public boolean isHibernating(String cloudState) throws FogbowException {
         return false;
     }
     
     @Override
+    public boolean isHibernated(String cloudState) {
+        return false;
+    }
+
+    @Override
+    public boolean isStopping(String cloudState) throws FogbowException {
+        return AzureStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.STOPPING);
+    }
+
+    @Override
     public boolean isStopped(String instanceState) {
         return AzureStateMapper.map(ResourceType.COMPUTE, instanceState).equals(InstanceState.STOPPED);
+    }
+
+    @Override
+    public boolean isResuming(String cloudState) throws FogbowException {
+        return AzureStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.RESUMING);
     }
 
     @Override

@@ -107,6 +107,28 @@ public class AzureComputePluginTest {
         Assert.assertFalse(this.azureComputePlugin.hasFailed(instanceState));
     }
     
+    // test case: When calling the isStopping method and the instance state is deallocating,
+    // it must verify if it returns true value
+    @Test
+    public void testIsStoppingSuccessfullyWhenIsStopping() throws FogbowException {
+        // set up
+        String instanceState = AzureStateMapper.DEALLOCATING_STATE;
+
+        // exercise and verify
+        Assert.assertTrue(this.azureComputePlugin.isStopping(instanceState));        
+    }
+    
+    // test case: When calling the isStopping method and the instance state is not deallocating,
+    // it must verify if it returns false value
+    @Test
+    public void testIsStoppingSuccessfullyWhenIsNotStopping() throws FogbowException {
+        // set up
+        String instanceState = AzureStateMapper.CREATING_STATE;
+
+        // exercise and verify
+        Assert.assertFalse(this.azureComputePlugin.isStopping(instanceState));        
+    }
+    
     // test case: When calling the isStopped method and the instance state is deallocated,
     // it must verify if it returns true value
     @Test
@@ -127,6 +149,28 @@ public class AzureComputePluginTest {
 
         // exercise and verify
         Assert.assertFalse(this.azureComputePlugin.isStopped(instanceState));        
+    }
+    
+    // test case: When calling the isResuming method and the instance state is starting,
+    // it must verify if it returns true value
+    @Test
+    public void testIsResumingSuccessfullyWhenIsResuming() throws FogbowException {
+        // set up
+        String instanceState = AzureStateMapper.STARTING_STATE;
+
+        // exercise and verify
+        Assert.assertTrue(this.azureComputePlugin.isResuming(instanceState));        
+    }
+    
+    // test case: When calling the isResuming method and the instance state is not starting,
+    // it must verify if it returns false value
+    @Test
+    public void testIsResumingSuccessfullyWhenIsNotResuming() throws FogbowException {
+        // set up
+        String instanceState = AzureStateMapper.CREATING_STATE;
+
+        // exercise and verify
+        Assert.assertFalse(this.azureComputePlugin.isResuming(instanceState));        
     }
     
     // test case: When calling the getVirtualNetworkResourceName method with a

@@ -68,8 +68,9 @@ public class AwsV2StateMapper {
 				return InstanceState.CREATING;
 			case RUNNING_STATE:
 				return InstanceState.READY;
-			case SHUTTING_DOWN_STATE:
 			case STOPPING_STATE:
+			    return InstanceState.STOPPING;
+			case SHUTTING_DOWN_STATE:
 			case REBOOTING_STATE:
 				return InstanceState.BUSY;
 			case STOPPED_STATE:

@@ -37,9 +37,17 @@ public interface ComputePlugin<S extends CloudUser> extends OrderPlugin<ComputeI
     
     public void resumeInstance(ComputeOrder order, S cloudUser) throws FogbowException;
 
+    public boolean isPausing(String cloudState) throws FogbowException;
+    
     public boolean isPaused(String cloudState) throws FogbowException;
 
-    public boolean isHibernated(String cloudState) throws FogbowException;
+    public boolean isHibernating(String cloudState) throws FogbowException;
 
+    public boolean isHibernated(String cloudState) throws FogbowException;
+    
+    public boolean isStopping(String cloudState) throws FogbowException;
+    
     public boolean isStopped(String cloudState) throws FogbowException;
+
+    public boolean isResuming(String cloudState) throws FogbowException;
 }

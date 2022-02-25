@@ -68,6 +68,9 @@ public class PausingProcessor extends StoppableOrderListProcessor implements Run
 
                 if (instance.isPaused()) {
                     OrderStateTransitioner.transition(order, OrderState.PAUSED);
+                } else if (!instance.isPausing()) {
+                    LOGGER.debug(Messages.Exception.PAUSE_FAILED);
+                    localCloudConnector.pauseComputeInstance(order);
                 }
             } catch (InstanceNotFoundException e) {
                 OrderStateTransitioner.transition(order, OrderState.FAILED_AFTER_SUCCESSFUL_REQUEST);

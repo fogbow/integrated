@@ -48,6 +48,8 @@ public class GetComputeResponse {
         private String status;
         @SerializedName(FAULT_MSG_KEY_JSON)
         private String faultMessage;
+        @SerializedName(TASK_STATE_JSON)
+        private String taskState;
     }
 
     public String getId() {
@@ -72,6 +74,10 @@ public class GetComputeResponse {
 
     public String getFaultMessage() {
         return server.faultMessage;
+    }
+    
+    public String getTaskState() {
+        return server.taskState;
     }
 
     public static GetComputeResponse fromJson(String json) {

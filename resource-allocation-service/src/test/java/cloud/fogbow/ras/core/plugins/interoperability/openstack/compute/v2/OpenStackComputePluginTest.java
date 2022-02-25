@@ -383,6 +383,23 @@ public class OpenStackComputePluginTest extends BaseUnitTests {
         Assert.assertEquals(testUtils.FAKE_INSTANCE_ID, computeInstance.getId());
         Assert.assertEquals(FAKE_INSTANCE_NAME, computeInstance.getName());
     }
+    
+    @Test
+    public void testGetInstanceFromJsonTaskStateIsNotNull() {
+        for (String operationInProgressState : OpenStackComputePlugin.OPERATION_IN_PROGRESS_STATES) {
+            // set up
+            String getRawResponse = createGetComputeResponseJsonWithTaskState(testUtils.FAKE_INSTANCE_ID, FAKE_INSTANCE_NAME, 
+                    operationInProgressState);
+            
+            // exercise
+            ComputeInstance computeInstance = this.computePlugin.getInstanceFromJson(getRawResponse);
+            
+            // verify
+            Assert.assertEquals(testUtils.FAKE_INSTANCE_ID, computeInstance.getId());
+            Assert.assertEquals(FAKE_INSTANCE_NAME, computeInstance.getName());
+            Assert.assertEquals(operationInProgressState, computeInstance.getCloudState());
+        }
+    }
 
     // test case: checks if a given flavor has a requirement
     @Test
@@ -718,8 +735,15 @@ public class OpenStackComputePluginTest extends BaseUnitTests {
         }
 
         return "{\"extra_specs\": {"+String.join(",", specs)+"}}";
-    }private String createGetComputeResponseJson(String id, String name) {
-        return "{\"server\":{\"id\":\""+id+"\",\"name\":\""+name+"\",\"addresses\":{\"provider\":" +
+    }
+
+    private String createGetComputeResponseJson(String id, String name) {
+        return "{\"server\":{\"id\":\""+id+"\",\"OS-EXT-STS:task_state\":null,\"name\":\""+name+"\",\"addresses\":{\"provider\":" +
+                "[{\"addr\":\"192.168.0.3\"}]},\"flavor\":{\"id\":1},\"status\":\"ACTIVE\"}}";
+    }
+
+    private String createGetComputeResponseJsonWithTaskState(String id, String name, String taskState) {
+        return "{\"server\":{\"id\":\""+id+"\",\"OS-EXT-STS:task_state\":"+taskState+",\"name\":\""+name+"\",\"addresses\":{\"provider\":" +
                 "[{\"addr\":\"192.168.0.3\"}]},\"flavor\":{\"id\":1},\"status\":\"ACTIVE\"}}";
     }
 

@@ -45,6 +45,22 @@ public class OpenStackStateMapperTest {
     }
     
     @Test
+    public void testComputeStatusToStoppingShelving() {
+        // set up
+        ResourceType resourceType = ResourceType.COMPUTE;
+        
+        // verify
+        Assert.assertEquals(InstanceState.STOPPING, 
+                OpenStackStateMapper.map(resourceType, OpenStackStateMapper.SHELVING_STATUS));
+        Assert.assertEquals(InstanceState.STOPPING, 
+                OpenStackStateMapper.map(resourceType, OpenStackStateMapper.SHELVING_OFFLOADING_STATUS));
+        Assert.assertEquals(InstanceState.STOPPING, 
+                OpenStackStateMapper.map(resourceType, OpenStackStateMapper.SHELVING_IMAGE_PENDING_UPLOAD));
+        Assert.assertEquals(InstanceState.STOPPING, 
+                OpenStackStateMapper.map(resourceType, OpenStackStateMapper.SHELVING_IMAGE_UPLOADING_STATUS));
+    }
+    
+    @Test
     public void testComputeStatusToStoppingShelved() {
         // set up
         ResourceType resourceType = ResourceType.COMPUTE;

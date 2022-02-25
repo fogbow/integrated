@@ -71,10 +71,11 @@ public class GoogleCloudStateMapper {
                         return InstanceState.CREATING;
                     case RUNNING_STATE:
                         return InstanceState.READY;
+                    case STOPPING_STATE:
+                        return InstanceState.STOPPING;
                     case TERMINATED_STATE:
                         return InstanceState.STOPPED;
                     case SUSPENDED_STATE:
-                    case STOPPING_STATE:
                     case SUSPENDING_STATE:
                         return InstanceState.BUSY;
                     case REPAIRING_STATE:

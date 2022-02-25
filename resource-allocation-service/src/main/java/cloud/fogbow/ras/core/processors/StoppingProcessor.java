@@ -67,6 +67,9 @@ public class StoppingProcessor extends StoppableOrderListProcessor implements Ru
 
                 if (instance.isStopped()) {
                     OrderStateTransitioner.transition(order, OrderState.STOPPED);
+                } else if (!instance.isStopping()) {
+                    LOGGER.debug(Messages.Exception.STOP_FAILED);
+                    localCloudConnector.stopComputeInstance(order);
                 }
             } catch (InstanceNotFoundException e) {
                 OrderStateTransitioner.transition(order, OrderState.FAILED_AFTER_SUCCESSFUL_REQUEST);

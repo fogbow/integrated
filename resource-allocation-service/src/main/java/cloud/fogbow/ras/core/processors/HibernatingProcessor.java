@@ -68,6 +68,9 @@ public class HibernatingProcessor extends StoppableOrderListProcessor implements
 
                 if (instance.isHibernated()) {
                     OrderStateTransitioner.transition(order, OrderState.HIBERNATED);
+                } else if (!instance.isHibernating()) {
+                    LOGGER.debug(Messages.Exception.HIBERNATION_FAILED);
+                    localCloudConnector.hibernateComputeInstance(order);
                 }
             } catch (InstanceNotFoundException e) {
                 OrderStateTransitioner.transition(order, OrderState.FAILED_AFTER_SUCCESSFUL_REQUEST);

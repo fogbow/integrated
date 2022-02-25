@@ -154,15 +154,30 @@ public class OpenNebulaComputePlugin implements ComputePlugin<CloudUser> {
 		// ToDo: implement
 	}
 
+    @Override
+    public boolean isPausing(String cloudState) throws FogbowException {
+        return false;
+    }
+	
 	@Override
 	public boolean isPaused(String cloudState) throws FogbowException {
 		return false;
 	}
 
+    @Override
+    public boolean isHibernating(String cloudState) throws FogbowException {
+        return false;
+    }
+	
 	@Override
 	public boolean isHibernated(String cloudState) throws FogbowException {
 		return false;
 	}
+
+    @Override
+    public boolean isStopping(String cloudState) throws FogbowException {
+        return false;
+    }
 	
     @Override
     public boolean isStopped(String cloudState) throws FogbowException {
@@ -170,6 +185,11 @@ public class OpenNebulaComputePlugin implements ComputePlugin<CloudUser> {
         return false;
     }
 
+    @Override
+    public boolean isResuming(String cloudState) throws FogbowException {
+        return false;
+    }
+    
 	@VisibleForTesting
     String doRequestInstance(Client client, CreateComputeRequest request)
 			throws InvalidParameterException, UnacceptableOperationException {

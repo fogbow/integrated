@@ -167,18 +167,38 @@ public class CloudStackComputePlugin implements ComputePlugin<CloudStackUser> {
     }
 
     @Override
+    public boolean isPausing(String cloudState) throws FogbowException {
+        return false;
+    }
+    
+    @Override
     public boolean isPaused(String cloudState) throws FogbowException {
         return false;
     }
 
+    @Override
+    public boolean isHibernating(String cloudState) throws FogbowException {
+        return false;
+    }
+    
     @Override
     public boolean isHibernated(String cloudState) throws FogbowException {
         return false;
     }
     
     @Override
+    public boolean isStopping(String cloudState) throws FogbowException {
+        return false;
+    }
+    
+    @Override
     public boolean isStopped(String cloudState) throws FogbowException {
         // TODO implement
+        return false;
+    }
+
+    @Override
+    public boolean isResuming(String cloudState) throws FogbowException {
         return false;
     }
 

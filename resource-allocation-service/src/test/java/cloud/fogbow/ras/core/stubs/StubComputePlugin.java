@@ -53,17 +53,37 @@ public class StubComputePlugin implements ComputePlugin<CloudUser> {
     }
 
     @Override
+    public boolean isPausing(String cloudState) throws FogbowException {
+        return false;
+    }
+    
+    @Override
     public boolean isPaused(String cloudState) {
         return false;
     }
 
+    @Override
+    public boolean isHibernating(String cloudState) throws FogbowException {
+        return false;
+    }
+    
     @Override
     public boolean isHibernated(String cloudState) {
         return false;
     }
 
     @Override
+    public boolean isStopping(String cloudState) throws FogbowException {
+        return false;
+    }
+    
+    @Override
     public boolean isStopped(String cloudState) throws FogbowException {
+        return false;
+    }
+    
+    @Override
+    public boolean isResuming(String cloudState) throws FogbowException {
         return false;
     }
     

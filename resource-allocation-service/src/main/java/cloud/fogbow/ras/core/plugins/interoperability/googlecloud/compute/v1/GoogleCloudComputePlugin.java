@@ -164,13 +164,28 @@ public class GoogleCloudComputePlugin implements ComputePlugin<GoogleCloudUser> 
     }
 
     @Override
+    public boolean isPausing(String cloudState) throws FogbowException {
+        return false;
+    }
+    
+    @Override
     public boolean isPaused(String instanceState) throws FogbowException {
         return false;
     }
 
     @Override
+    public boolean isHibernating(String instanceState) throws FogbowException {
+        return false;
+    }
+    
+    @Override
     public boolean isHibernated(String instanceState) throws FogbowException {
         return false;
+    }
+
+    @Override
+    public boolean isStopping(String instanceState) throws FogbowException {
+        return GoogleCloudStateMapper.map(ResourceType.COMPUTE, instanceState).equals(InstanceState.STOPPING);
     }
     
     @Override
@@ -178,6 +193,11 @@ public class GoogleCloudComputePlugin implements ComputePlugin<GoogleCloudUser> 
         return GoogleCloudStateMapper.map(ResourceType.COMPUTE, instanceState).equals(InstanceState.STOPPED);
     }
 
+    @Override
+    public boolean isResuming(String cloudState) throws FogbowException {
+        return GoogleCloudStateMapper.map(ResourceType.COMPUTE, cloudState).equals(InstanceState.CREATING);
+    }
+    
     @Override
     public boolean isReady(String instanceState) {
         return GoogleCloudStateMapper.map(ResourceType.COMPUTE, instanceState).equals(InstanceState.READY);

@@ -38,20 +38,29 @@ public class OpenStackStateMapper {
     public static final String MAINTENANCE_STATUS = "maintenance";
     public static final String MIGRATING_STATUS = "migrating";
     public static final String PASSWORD_STATUS = "password";
+    public static final String PAUSING_STATUS = "pausing";
     public static final String PAUSED_STATUS = "paused";
     public static final String REBOOT_STATUS = "reboot";
     public static final String REBUILD_STATUS = "rebuild";
     public static final String RESCUE_STATUS = "rescue";
     public static final String RESIZE_STATUS = "resize";
     public static final String RESTORING_BACKUP_STATUS = "restoring-backup";
+    public static final String RESUMING_STATUS = "resuming";
     public static final String RETYPING_STATUS = "retyping";
     public static final String REVERT_RESIZE_STATUS = "revert_resize";
+    public static final String SHELVING_STATUS = "shelving";
+    public static final String SHELVING_IMAGE_PENDING_UPLOAD = "shelving_image_pending_upload";
+    public static final String SHELVING_IMAGE_UPLOADING_STATUS = "shelving_image_uploading";
+    public static final String SHELVING_OFFLOADING_STATUS = "shelving_offloading";
     public static final String SHELVED_STATUS = "shelved";
     public static final String SHELVED_OFFLOADED_STATUS = "shelved_offloaded";
     public static final String SHUTOFF_STATUS = "shutoff";
     public static final String SOFT_DELETED_STATUS = "soft_deleted";
+    public static final String SPAWNING_STATUS = "spawning";
+    public static final String SUSPENDING_STATUS = "suspending";
     public static final String SUSPENDED_STATUS = "suspended";
     public static final String UNKNOWN_STATUS = "unknown";
+    public static final String UNSHELVING_STATUS = "unshelving";
     public static final String UPLOADING_STATUS = "uploading";
     public static final String VERIFY_RESIZE_STATUS = "verify_resize";
 
@@ -71,13 +80,26 @@ public class OpenStackStateMapper {
                         return InstanceState.CREATING;
                     case ERROR_STATUS:
                         return InstanceState.FAILED;
+                    case PAUSING_STATUS:
+                        return InstanceState.PAUSING;
                     case PAUSED_STATUS:
                         return InstanceState.PAUSED;
+                    case SUSPENDING_STATUS:
+                        return InstanceState.HIBERNATING;
                     case SUSPENDED_STATUS:
                         return InstanceState.HIBERNATED;
+                    case SHELVING_STATUS:
+                    case SHELVING_OFFLOADING_STATUS:
+                    case SHELVING_IMAGE_PENDING_UPLOAD:
+                    case SHELVING_IMAGE_UPLOADING_STATUS:
+                        return InstanceState.STOPPING;
                     case SHELVED_STATUS:
                     case SHELVED_OFFLOADED_STATUS:
                         return InstanceState.STOPPED;
+                    case SPAWNING_STATUS:
+                    case UNSHELVING_STATUS:
+                    case RESUMING_STATUS:
+                        return InstanceState.RESUMING;
                     case DELETED_STATUS:
                     case HARD_REBOOT_STATUS:
                     case MIGRATING_STATUS:

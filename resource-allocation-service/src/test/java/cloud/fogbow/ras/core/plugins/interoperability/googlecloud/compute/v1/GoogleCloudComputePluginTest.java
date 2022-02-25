@@ -103,6 +103,39 @@ public class GoogleCloudComputePluginTest extends BaseUnitTests {
         Mockito.verify(this.client).doPostRequest(expectedUrl, expectedRequestBody, cloudUser);
     }
     
+    // test case: When calling the isStopping method with the cloud state STOPPING,
+    // this means that the state of compute is STOPPING and it must return true.
+    @Test
+    public void testIsStopping() throws FogbowException {
+        // set up
+        String cloudState = GoogleCloudStateMapper.STOPPING_STATE;
+
+        // exercise
+        boolean status = this.plugin.isStopping(cloudState);
+
+        // verify
+        Assert.assertTrue(status);
+    }
+    
+    // test case: When calling the isStopping method with the cloud states different
+    // from STOPPING, this means that the state of compute is not STOPPING and it must
+    // return false.
+    @Test
+    public void testIsNotStopping() throws FogbowException {
+        // set up
+        String[] cloudStates = { ANY_VALUE, GoogleCloudStateMapper.PROVISIONING_STATE, GoogleCloudStateMapper.STAGING_STATE,
+          GoogleCloudStateMapper.RUNNING_STATE, GoogleCloudStateMapper.TERMINATED_STATE, GoogleCloudStateMapper.REPAIRING_STATE,
+          GoogleCloudStateMapper.SUSPENDING_STATE, GoogleCloudStateMapper.SUSPENDED_STATE};
+
+        for (String cloudState : cloudStates) {
+            // exercise
+            boolean status = this.plugin.isStopping(cloudState);
+
+            // verify
+            Assert.assertFalse(status);
+        }
+    }
+    
     // test case: When calling the isStopped method with the cloud state TERMINATED,
     // this means that the state of compute is STOPPED and it must return true.
     @Test
@@ -130,6 +163,42 @@ public class GoogleCloudComputePluginTest extends BaseUnitTests {
         for (String cloudState : cloudStates) {
             // exercise
             boolean status = this.plugin.isStopped(cloudState);
+
+            // verify
+            Assert.assertFalse(status);
+        }
+    }
+    
+    // test case: When calling the isResuming method with the cloud states PROVISIONING or STAGING,
+    // this means that the state of compute is RESUMING and it must return true.
+    @Test
+    public void testIsResuming() throws FogbowException {
+        // set up
+        String cloudStateProvisioning = GoogleCloudStateMapper.PROVISIONING_STATE;
+        String cloudStateStaging = GoogleCloudStateMapper.STAGING_STATE;
+
+        // exercise
+        boolean statusProvisioning = this.plugin.isResuming(cloudStateProvisioning);
+        boolean statusStaging = this.plugin.isResuming(cloudStateStaging);
+
+        // verify
+        Assert.assertTrue(statusProvisioning);
+        Assert.assertTrue(statusStaging);
+    }
+    
+    // test case: When calling the isResuming method with the cloud states different
+    // from PROVISIONING and STAGING, this means that the state of compute is not RESUMING and it must
+    // return false.
+    @Test
+    public void testIsNotResuming() throws FogbowException {
+        // set up
+        String[] cloudStates = { ANY_VALUE, GoogleCloudStateMapper.RUNNING_STATE, 
+                GoogleCloudStateMapper.TERMINATED_STATE, GoogleCloudStateMapper.REPAIRING_STATE, 
+                GoogleCloudStateMapper.SUSPENDING_STATE, GoogleCloudStateMapper.SUSPENDED_STATE};
+
+        for (String cloudState : cloudStates) {
+            // exercise
+            boolean status = this.plugin.isResuming(cloudState);
 
             // verify
             Assert.assertFalse(status);

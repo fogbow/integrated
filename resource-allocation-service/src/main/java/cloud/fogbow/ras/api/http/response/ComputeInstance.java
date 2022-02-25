@@ -44,6 +44,14 @@ public class ComputeInstance extends OrderInstance {
     private boolean isHibernated;
     @ApiModelProperty(position = 19)
     private boolean isStopped;
+    @ApiModelProperty(position = 20)
+    private boolean isPausing;
+    @ApiModelProperty(position = 21)
+    private boolean isHibernating;
+    @ApiModelProperty(position = 22)
+    private boolean isStopping;
+    @ApiModelProperty(position = 23)
+    private boolean isResuming;
 
     public ComputeInstance(String id, String cloudState, String name, List<String> ipAddresses, String faultMessage) {
         super(id, cloudState, faultMessage);
@@ -52,6 +60,10 @@ public class ComputeInstance extends OrderInstance {
         this.isPaused = false;
         this.isHibernated = false;
         this.isStopped = false;
+        this.isPausing = false;
+        this.isHibernating = false;
+        this.isStopping = false;
+        this.isResuming = false;
     }
 
     @Deprecated
@@ -66,6 +78,10 @@ public class ComputeInstance extends OrderInstance {
         this.isPaused = false;
         this.isHibernated = false;
         this.isStopped = false;
+        this.isPausing = false;
+        this.isHibernating = false;
+        this.isStopping = false;
+        this.isResuming = false;
     }
 
     public ComputeInstance(String id, String cloudState, String name, int vCPU, int ram, int disk,
@@ -79,6 +95,10 @@ public class ComputeInstance extends OrderInstance {
         this.isPaused = false;
         this.isHibernated = false;
         this.isStopped = false;
+        this.isPausing = false;
+        this.isHibernating = false;
+        this.isStopping = false;
+        this.isResuming = false;
     }
 
     public ComputeInstance(String id, String cloudState, String name, int vCPU, int ram, int disk,
@@ -95,6 +115,10 @@ public class ComputeInstance extends OrderInstance {
         this.isPaused = false;
         this.isHibernated = false;
         this.isStopped = false;
+        this.isPausing = false;
+        this.isHibernating = false;
+        this.isStopping = false;
+        this.isResuming = false;
     }
 
     public ComputeInstance(String id) {
@@ -102,6 +126,10 @@ public class ComputeInstance extends OrderInstance {
         this.isPaused = false;
         this.isHibernated = false;
         this.isStopped = false;
+        this.isPausing = false;
+        this.isHibernating = false;
+        this.isStopping = false;
+        this.isResuming = false;
     }
 
     public int getDisk() {
@@ -168,34 +196,102 @@ public class ComputeInstance extends OrderInstance {
         this.userData = userData;
     }
 
+    public void setPausing() {
+        this.isHibernated = false;
+        this.isPaused = false;
+        this.isStopped = false;
+        this.isStopping = false;
+        this.isPausing = true;
+        this.isHibernating = false;
+        this.isResuming = false;
+    }
+
+    public boolean isPausing() {
+        return isPausing;
+    }
+    
     public void setPaused() {
         this.isPaused = true;
         this.isHibernated = false;
         this.isStopped = false;
+        this.isStopping = false;
+        this.isPausing = false;
+        this.isHibernating = false;
+        this.isResuming = false;
     }
 
     public boolean isPaused() {
         return isPaused;
     }
 
+    public void setHibernating() {
+        this.isHibernated = false;
+        this.isPaused = false;
+        this.isStopped = false;
+        this.isStopping = false;
+        this.isPausing = false;
+        this.isHibernating = true;
+        this.isResuming = false;
+    }
+    
+    public boolean isHibernating() {
+        return isHibernating;
+    }
+
     public void setHibernated() {
         this.isHibernated = true;
         this.isPaused = false;
         this.isStopped = false;
+        this.isStopping = false;
+        this.isPausing = false;
+        this.isHibernating = false;
+        this.isResuming = false;
     }
 
     public boolean isHibernated() {
         return isHibernated;
+    }
+
+    public void setStopping() {
+        this.isStopped = false;
+        this.isPaused = false;
+        this.isHibernated = false;
+        this.isStopping = true;
+        this.isPausing = false;
+        this.isHibernating = false;
+        this.isResuming = false;
+    }
+    
+    public boolean isStopping() {
+        return isStopping;
     }
     
     public void setStopped() {
         this.isStopped = true;
         this.isPaused = false;
         this.isHibernated = false;
+        this.isStopping = false;
+        this.isPausing = false;
+        this.isHibernating = false;
+        this.isResuming = false;
     }
 
     public boolean isStopped() {
         return isStopped;
+    }
+    
+    public void setResuming() {
+        this.isStopped = false;
+        this.isPaused = false;
+        this.isHibernated = false;
+        this.isStopping = false;
+        this.isPausing = false;
+        this.isHibernating = false;
+        this.isResuming = true;
+    }
+    
+    public boolean isResuming() {
+        return isResuming;
     }
 
     @Override

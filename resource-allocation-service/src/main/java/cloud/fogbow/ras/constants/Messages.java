@@ -5,6 +5,7 @@ public class Messages {
     public static class Exception {
         public static final String ACTIVE_SOURCE_COMPUTE = "The source compute needs to be paused or hibernated before taking the snapshot.";
         public static final String ADMIN_ROLE_NOT_SPECIFIED = "Admin role is not specified in the configuration file.";
+        public static final String CANNOT_RESUME_INSTANCE_DUE_TO_INSTANCE_STATE = "Instance is not in a state that allows resume operation.";
         public static final String CLOUD_NAMES_DO_NOT_MATCH = "The embedded resource has not been instantiated in the same cloud.";
         public static final String DEFAULT_CREDENTIALS_NOT_FOUND = "Default credentials not found.";
         public static final String DEFAULT_NETWORK_NOT_FOUND = "Default network not found.";
@@ -27,6 +28,7 @@ public class Messages {
         public static final String FAILED_TO_GET_QUOTA = "Failed to get quota.";
         public static final String GENERIC_EXCEPTION_S = Log.GENERIC_EXCEPTION_S;
         public static final String HIBERNATE_OPERATION_ONGOING = "The virtual Machine is already being hibernated.";
+        public static final String HIBERNATION_FAILED = "Hibernation failed. Trying again.";
         public static final String IMAGE_NOT_FOUND = "Image not found.";
         public static final String INCORRECT_PROVIDER = "Incorrect provider.";
         public static final String INCORRECT_REQUESTING_PROVIDER = "Mismatch on requesting provider information.";
@@ -52,6 +54,7 @@ public class Messages {
         public static final String NO_PROJECT_ID = "No projectId in local token.";
         public static final String NO_SECURITY_GROUP_FOUND_S = "There is no security group with the id %s";
         public static final String NULL_VALUE_RETURNED = "Plugin returned a null value for the instanceId.";
+        public static final String PAUSE_FAILED = "Pause failed. Trying again.";
         public static final String PAUSE_OPERATION_ONGOING = "The virtual Machine is already being paused.";
         public static final String POLICY_CLASS_NOT_SPECIFIED = "Policy class is not specified in the configuration file.";
         public static final String POLICY_FILE_NAME_NOT_SPECIFIED = "Policy file name is not specified in the configuration file.";
@@ -65,10 +68,12 @@ public class Messages {
         public static final String RESOURCE_GROUP_LIMIT_EXCEEDED = "Resource group limit exceeded.";
         public static final String RESOURCE_TYPE_NOT_COMPATIBLE_S = "Resource type not compatible with %s request.";
         public static final String RESOURCE_TYPE_NOT_IMPLEMENTED = "Resource type not yet implemented.";
+        public static final String RESUME_FAILED = "Resume failed. Trying again.";
         public static final String RESUME_OPERATION_ONGOING = "The virtual Machine is already being resumed.";
         public static final String RULE_NOT_AVAILABLE = "Rule not available for deletion.";
         public static final String SECURITY_GROUP_EQUALLY_NAMED_S_NOT_FOUND_S = "There is no security group with name: %s.";
         public static final String SIGNALING_PROVIDER_DIFFERENT_OF_PROVIDER_S_S = "Signalling provider %s is not the provider %s.";
+        public static final String STOP_FAILED = "Stop failed. Trying again.";
         public static final String STOP_OPERATION_ONGOING = "The virtual machine is already being stopped.";
         public static final String TOO_BIG_USER_DATA_FILE_CONTENT = "Too big user data file.";
         public static final String TRYING_TO_USE_RESOURCES_FROM_ANOTHER_USER = "Trying to use resources from another user.";
